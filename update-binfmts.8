@@ -1,34 +1,34 @@
 .\" update-binfmts.8
-.TH UPDATE-BINFMTS 8 "6 January 2002" DEBIAN "Debian"
+.TH UPDATE\-BINFMTS 8 "6 January 2002" DEBIAN "Debian"
 .SH NAME
-update-binfmts \- maintain registry of executable binary formats
+update\-binfmts \- maintain registry of executable binary formats
 .SH SYNOPSIS
-.B update-binfmts
+.B update\-binfmts
 .RI [ options ]
 .B \-\-install
 .I name path spec
 .br
-.B update-binfmts
+.B update\-binfmts
 .RI [ options ]
 .B \-\-remove
 .I name path
 .br
-.B update-binfmts
+.B update\-binfmts
 .RI [ options ]
 .B \-\-import
 .RI [ name ]
 .br
-.B update-binfmts
+.B update\-binfmts
 .RI [ options ]
 .B \-\-display
 .RI [ name ]
 .br
-.B update-binfmts
+.B update\-binfmts
 .RI [ options ]
 .B \-\-enable
 .RI [ name ]
 .br
-.B update-binfmts
+.B update\-binfmts
 .RI [ options ]
 .B \-\-disable
 .RI [ name ]
@@ -43,14 +43,14 @@ Think of it as a more flexible version of the #! executable interpreter
 mechanism, or as something which can behave a little like "associations" in
 certain other operating systems (though in GNU/Linux the tendency is to keep
 this sort of thing somewhere else, like your file manager).
-.B update-binfmts
+.B update\-binfmts
 manages a persistent database of these interpreters.
 .PP
 When each package providing a registered interpreter is installed, changed,
 or removed,
-.B update-binfmts
+.B update\-binfmts
 is called to update information about that interpreter.
-.B update-binfmts
+.B update\-binfmts
 is usually called from the
 .I postinst
 or
@@ -141,7 +141,7 @@ below for the required contents of these files.
 For packages, this is preferable to using the
 .B \-\-install
 option, as a format file can be installed without
-.B update-binfmts
+.B update\-binfmts
 needing to be available.
 .TP
 \fB\-\-display\fP [\fIname\fP]
@@ -177,7 +177,7 @@ This matches all files with the magic number
 .IR byte-sequence .
 Hexadecimal escapes may be included in the
 .I byte-sequence
-by preceding them with \ex, for example '\ex0a' for a linefeed.
+by preceding them with \ex, for example \(oq\ex0a\(cq for a linefeed.
 Remember to protect such escapes with quotes or an additional backslash to
 prevent their interpretation by the shell.
 .IP
@@ -246,31 +246,31 @@ This format file can be used with an interpreter capable of handling Java
 This corresponds roughly to the following command:
 .PP
 .nf
-    update-binfmts --package javawrapper \e
-        --install javawrapper /usr/bin/javawrapper \e
-        --magic '\exca\exfe\exba\exbe'
+    update\-binfmts \-\-package javawrapper \e
+        \-\-install javawrapper /usr/bin/javawrapper \e
+        \-\-magic \(aq\exca\exfe\exba\exbe\(aq
 .fi
 .SH NOTES
-If you're not careful, you can break your system with update-binfmts.
+If you're not careful, you can break your system with update\-binfmts.
 An easy way to do this is to register an ELF binary as a handler for ELF,
 which will almost certainly cause your system to hang immediately; even if
-it doesn't, you won't be able to run update-binfmts to fix it.
-In the future update-binfmts may have some checks to prevent this sort of
+it doesn't, you won't be able to run update\-binfmts to fix it.
+In the future update\-binfmts may have some checks to prevent this sort of
 thing happening accidentally, though of course you can still manipulate the
 binfmt_misc kernel module directly.
 .SH AUTHOR
-.B update-binfmts
+.B update\-binfmts
 is copyright (c) 2000-2002 Colin Watson <cjwatson@debian.org>.
 See the GNU General Public License version 2 or later for copying
 conditions.
 .PP
-You can find the GNU GPL in /usr/share/common-licenses/GPL on any modern
+You can find the GNU GPL in /usr/share/common\-licenses/GPL on any modern
 Debian system.
 .PP
 Richard Guenther wrote the binfmt_misc kernel module.
 .SH THANKS
 Ian Jackson wrote
-.B update-alternatives
+.B update\-alternatives
 and
-.BR dpkg-divert ,
+.BR dpkg\-divert ,
 from which this program borrows heavily.
