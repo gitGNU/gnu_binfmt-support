@@ -369,6 +369,8 @@ sub act_disable (;$)
     }
 }
 
+# Install a binary format into binfmt-support's database. Attempt to enable
+# the new format in the kernel as well.
 sub act_install ($$)
 {
     my $name = shift;
@@ -427,6 +429,8 @@ sub act_install ($$)
     return 1;
 }
 
+# Remove a binary format from binfmt-support's database. Attempt to disable
+# the format in the kernel first.
 sub act_remove ($$)
 {
     my $name = shift;
@@ -463,6 +467,8 @@ sub act_remove ($$)
     return 1;
 }
 
+# Import a new format file into binfmt-support's database. This is intended
+# for use by packaging systems.
 sub act_import (;$);
 sub act_import (;$)
 {
@@ -530,6 +536,7 @@ sub act_import (;$)
     }
 }
 
+# Display a format stored in binfmt-support's database.
 sub act_display (;$);
 sub act_display (;$)
 {
