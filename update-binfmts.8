@@ -1,5 +1,5 @@
 .\" update-binfmts.8
-.TH UPDATE-BINFMTS 8 "31 March 2000" DEBIAN "Debian GNU/Linux"
+.TH UPDATE-BINFMTS 8 "17 February 2001" DEBIAN "Debian GNU"
 .SH NAME
 update-binfmts \- maintain registry of executable binary formats
 .SH SYNOPSIS
@@ -16,7 +16,7 @@ update-binfmts \- maintain registry of executable binary formats
 .B update-binfmts
 .RI [ options ]
 .B --display
-.I name
+.RI [ name ]
 .br
 .B update-binfmts
 .RI [ options ]
@@ -83,9 +83,10 @@ Remove the binary format identified by \fIname\fP with interpreter \fIpath\fP
 from the database. This will also attempt to disable the binary format in the
 kernel; see \fB--disable\fP below.
 .TP
-.BI --display " name"
+\fB--display\fP [\fIname\fP]
 Display any information held in the database about the binary format identifier
-\fIname\fP.
+\fIname\fP, or about all known binary formats if no \fIname\fP is given. Also
+show whether displayed binary formats are enabled or disabled.
 .TP
 \fB--enable\fP [\fIname\fP]
 Enable binary format \fIname\fP, or all known binary formats if no \fIname\fP
@@ -102,9 +103,9 @@ to work.
 .TP
 .BI --magic " byte-sequence"
 This matches all files with the magic number \fIbyte-sequence\fP. Hexadecimal
-escapes may be included in the \fIbyte-sequence\fP by preceding them with \x,
-for example '\x0a' for a linefeed. Remember to protect such escapes with quotes
-or an additional backslash to prevent their interpretation by the shell.
+escapes may be included in the \fIbyte-sequence\fP by preceding them with \ex,
+for example '\ex0a' for a linefeed. Remember to protect such escapes with
+quotes or an additional backslash to prevent their interpretation by the shell.
 .IP
 Also see
 .BR --offset " and " mask .
@@ -135,8 +136,8 @@ won't be able to run update-binfmts to fix it. In the future update-binfmts may
 have some checks to prevent this sort of thing happening accidentally, though
 of course you can still manipulate the binfmt_misc kernel module directly.
 .SH AUTHOR
-Debian GNU/Linux update-binfmts is copyright (c) 2000 Colin Watson
-<cjw44@flatline.org.uk>. See the GNU General Public License version 2 or later
+Debian GNU update-binfmts is copyright (c) 2000-2001 Colin Watson
+<cjwatson@debian.org>. See the GNU General Public License version 2 or later
 for copying conditions.
 .PP
 You can find the GNU GPL in /usr/share/common-licenses/GPL on any modern Debian

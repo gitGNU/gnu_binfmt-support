@@ -15,7 +15,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 NAME=binfmt-support
 DESC="additional executable binary formats"
 
-test -x $WRAPPER || exit 0
+test -x /usr/sbin/update-binfmts || exit 0
 
 set -e
 

@@ -1,9 +1,9 @@
 Source: binfmt-support
 Section: admin
 Priority: optional
-Maintainer: Colin Watson <cjw44@flatline.org.uk>
-Standards-Version: 3.2.1
-Build-Depends-Indep: debhelper
+Maintainer: Colin Watson <cjwatson@debian.org>
+Standards-Version: 3.5.1
+Build-Depends-Indep: debhelper (>= 3.0.5)
 
 Package: binfmt-support
 Architecture: all

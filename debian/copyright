@@ -1,10 +1,10 @@
 This is binfmt-support, written and maintained by Colin Watson
-<cjw44@flatline.org.uk>, and Debianized on Sun, 30 Apr 2000 15:10:38 +0100.
+<cjwatson@debian.org>, and Debianized on Sun, 30 Apr 2000 15:10:38 +0100.
 
 The original source can always be found at:
-	ftp://ftp.debian.org/dists/unstable/main/source/
+	ftp://ftp.debian.org/debian/pool/main/b/binfmt-support/
 
-Copyright (C) 2000  Colin Watson
+Copyright (C) 2000-2001  Colin Watson
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

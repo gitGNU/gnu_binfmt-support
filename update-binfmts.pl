@@ -1,16 +1,17 @@
 #! /usr/bin/perl -w
 
-# Copyright (c) 2000 Colin Watson <cjw44@flatline.org.uk>.
+# Copyright (c) 2000-2001 Colin Watson <cjwatson@debian.org>.
 # See update-binfmts(8) for documentation.
 
 use strict;
 
-sub ENOENT () { 2; }
+use Errno qw(ENOENT);
+use POSIX qw(uname);
 
-my $VERSION = '1.0.3';
+my $VERSION = '@VERSION@';
 
-my $errstarted = 0;
 my $test;
+my %test_installed;
 my $admindir = '/var/lib/binfmts';
 my $package;
 my $mode;
@@ -18,8 +19,12 @@ my ($name, $interpreter);
 my $type;
 my ($magic, $mask, $offset, $extension);
 
+my $procdir = '/proc/sys/fs/binfmt_misc';
+my $register = "$procdir/register";
+
 local *BINFMT;
 
+# Format output nicely.
 sub wrap ($)
 {
     my $text = shift;
@@ -27,16 +32,17 @@ sub wrap ($)
     return $text;
 }
 
+# Various "print something and exit" routines.
+
 sub quit ($;@)
 {
-    unless ($errstarted) { print STDERR "\n"; $errstarted = 1; }
     print STDERR wrap "update-binfmts: @_\n";
     exit 2;
 }
 
 sub version ()
 {
-    print "Debian GNU/Linux update-binfmts $VERSION.\n"
+    print "Debian GNU update-binfmts $VERSION.\n"
 	or quit "unable to write version message: $!";
 }
 
@@ -44,14 +50,14 @@ sub usage ()
 {
     version;
     print <<EOF
-Copyright (c) 2000 Colin Watson. This is free software; see the GNU
+Copyright (c) 2000-2001 Colin Watson. This is free software; see the GNU
 General Public License version 2 or later for copying conditions.
 
 Usage:
 
   update-binfmts [options] --install <name> <path> <spec>
   update-binfmts [options] --remove <name> <path>
-  update-binfmts [options] --display <name>
+  update-binfmts [options] --display [<name>]
   update-binfmts [options] --enable [<name>]
   update-binfmts [options] --disable [<name>]
 
@@ -81,31 +87,57 @@ sub usage_quit ($;@)
     exit 2;
 }
 
+sub check_supported_os ()
+{
+    my $sysname = (uname)[0];
+    return if $sysname eq 'Linux';
+    print <<EOF;
+Sorry, update-binfmts currently only works on Linux.
+EOF
+    if ($sysname eq 'GNU')
+    {
+	print <<EOF;
+Patches for Hurd support are welcomed; they should not be difficult.
+EOF
+    }
+    exit 2;
+}
+
+# Something has gone wrong, but not badly enough for us to give up.
 sub warning ($;@) {
-    unless ($errstarted) { print STDERR "\n"; $errstarted = 1; }
     print STDERR wrap "update-binfmts: warning: @_\n";
 }
 
-sub check_modes ()
+# Make sure options are unambiguous.
+
+sub check_modes ($)
 {
     return unless $mode;
-    usage_quit "two modes given: --$mode and $_";
+    usage_quit "two modes given: --$mode and $_[0]";
 }
 
-sub check_types ()
+sub check_types ($)
 {
     return unless $type;
-    usage_quit "two binary format specifications given: --$type and $_";
+    usage_quit "two binary format specifications given: --$type and $_[0]";
 }
 
-sub print_binfmt ($)
+sub print_binfmt ($$$)
 {
-    my $line = shift;
+    my ($name, $description, $line) = @_;
     if ($line =~ /\n/)
     {
 	quit "newlines prohibited in update-binfmts files ($line).";
     }
-    print BINFMT "$line\n";
+    if ($test)
+    {
+	printf "%12s = %s\n", $description, $line;
+	push @{$test_installed{$name}}, $line;
+    }
+    else
+    {
+	print BINFMT "$line\n";
+    }
 }
 
 sub rename_mv ($$)
@@ -117,6 +149,10 @@ sub rename_mv ($$)
 sub get_binfmt ($)
 {
     my $name = shift;
+    if ($test and exists $test_installed{$name})
+    {
+	return @{$test_installed{$name}};
+    }
     my @binfmt;
     open BINFMT, "$admindir/$name"
 	or quit "unable to open $admindir/$name: $!";
@@ -126,11 +162,11 @@ sub get_binfmt ($)
     return @binfmt;
 }
 
-my $procdir = '/proc/sys/fs/binfmt_misc';
-my $register = "$procdir/register";
+# Actions.
 
-sub enable (;$);
-sub enable (;$)
+# Enable a binary format in the kernel.
+sub act_enable (;$);
+sub act_enable (;$)
 {
     my $name = shift;
     unless (-d $procdir)
@@ -152,7 +188,7 @@ sub enable (;$)
     }
     if (defined $name)
     {
-	unless (-e "$admindir/$name")
+	unless ($test or -e "$admindir/$name")
 	{
 	    warning "$name not in database of installed binary formats.";
 	    return 0;
@@ -163,7 +199,8 @@ sub enable (;$)
 	my $regstring = ":$name:$type:$offset:$magic:$mask:$interpreter:\n";
 	if ($test)
 	{
-	    print "\nenable $name with format string:\n$regstring\n";
+	    print "enable $name with the following format string:\n",
+		  " $regstring";
 	}
 	else
 	{
@@ -181,15 +218,16 @@ sub enable (;$)
 	    or warning "unable to open $admindir: $!", return 0;
 	while (defined($_ = readdir ADMINDIR))
 	{
-	    enable $_ unless /^\.\.?$/ || -e "$procdir/$_";
+	    act_enable $_ unless /^\.\.?$/ or -e "$procdir/$_";
 	}
 	closedir ADMINDIR;
     }
     return 1;
 }
 
-sub disable (;$);
-sub disable (;$)
+# Disable a binary format in the kernel.
+sub act_disable (;$);
+sub act_disable (;$)
 {
     my $name = shift;
     return 1 unless -d $procdir;    # We're disabling anyway, so we don't mind
@@ -216,7 +254,7 @@ sub disable (;$)
 
 	if ($test)
 	{
-	    print "\ndisable $name\n";
+	    print "disable $name\n";
 	}
 	else
 	{
@@ -236,92 +274,220 @@ sub disable (;$)
 	    or warning "unable to open $admindir: $!", return 0;
 	while (defined($_ = readdir ADMINDIR))
 	{
-	    disable $_ unless /^\.\.?$/;
+	    act_disable $_ unless /^\.\.?$/ or not -e "$procdir/$_";
 	}
 	closedir ADMINDIR;
     }
     return 1;
 }
 
+sub act_install ($)
+{
+    my $name = shift;
+    if (-f "$admindir/$name")
+    {
+	# For now we just silently zap any old versions with the same
+	# package name (has to be silent or upgrades are annoying). Maybe we
+	# should be more careful in the future.
+	my $oldpackage = (get_binfmt $name)[0];
+	unless ($package eq $oldpackage)
+	{
+	    $package = '<local>'	    if $package eq ':';
+	    $oldpackage = '<local>'	    if $oldpackage eq ':';
+	    quit "current package is $package, but binary format already " .
+		 "installed by $oldpackage.";
+	}
+	act_disable $name or quit "unable to disable binary format $name.";
+    }
+    if (-e "$procdir/$name" and not $test)
+    {
+	# This is a bit tricky. If we get here, then the kernel knows about
+	# a format we don't. Either somebody has used binfmt_misc directly,
+	# or update-binfmts did something wrong. For now we do nothing;
+	# disabling and re-enabling all binary formats will fix this anyway.
+	# There may be a --force option in the future to help with problems
+	# like this.
+	# 
+	# Disabled for --test, because otherwise it never works; the
+	# vagaries of binfmt_misc mean that it isn't really possible to find
+	# out from userspace exactly what's going to happen if people have
+	# been bypassing update-binfmts.
+	quit "found manually created entry for $name in $procdir; " .
+	     "leaving it alone.";
+    }
+    if ($test)
+    {
+	print "install the following binary format description:\n";
+    }
+    else
+    {
+	unlink "$admindir/$name.tmp" or $! == ENOENT
+	    or quit "unable to ensure $admindir/$name.tmp nonexistent: $!";
+	open BINFMT, ">$admindir/$name.tmp"
+	    or quit "unable to open $admindir/$name.tmp for writing: $!";
+    }
+    print_binfmt $name, 'package', $package;
+    print_binfmt $name, 'type', $type;
+    print_binfmt $name, 'offset', (defined($offset) ? $offset : '');
+    print_binfmt $name, 'magic', (defined($magic) ? $magic : $extension);
+    print_binfmt $name, 'mask', (defined($mask) ? $mask : '');
+    print_binfmt $name, 'interpreter', $interpreter;
+    unless ($test)
+    {
+	close BINFMT or quit "unable to close $admindir/$name.tmp: $!";
+	rename_mv "$admindir/$name.tmp", "$admindir/$name"
+	    or quit "unable to install $admindir/$name.tmp as " .
+		    "$admindir/$name: $!";
+    }
+    act_enable $name or quit "unable to enable binary format $name.";
+}
+
+sub act_remove ($)
+{
+    my $name = shift;
+    unless (-f "$admindir/$name")
+    {
+	# There may be a --force option in the future to allow entries like
+	# this to be removed; either they were created manually or
+	# update-binfmts was broken.
+	quit "$admindir/$name does not exist; nothing to do!";
+    }
+    my $oldpackage = (get_binfmt $name)[0];
+    unless ($package eq $oldpackage)
+    {
+	$package = '<local>'	    if $package eq ':';
+	$oldpackage = '<local>'	    if $oldpackage eq ':';
+	quit "current package is $package, but binary format already " .
+	     "installed by $oldpackage.";
+    }
+    act_disable $name or quit "unable to disable binary format $name.";
+    if ($test)
+    {
+	print "remove $admindir/$name\n";
+    }
+    else
+    {
+	unlink "$admindir/$name"
+	    or quit "unable to remove $admindir/$name: $!";
+    }
+}
+
+sub act_display (;$);
+sub act_display (;$)
+{
+    my $name = shift;
+    if (defined $name)
+    {
+	print "$name (", (-e "$procdir/$name" ? 'enabled' : 'disabled'),
+	      "):\n";
+	my ($package, $type, $offset, $magic, $mask, $interpreter) =
+	    get_binfmt $name;
+	$package = '<local>' if $package eq ':';
+	print <<EOF;
+     package = $package
+        type = $type
+      offset = $offset
+       magic = $magic
+        mask = $mask
+ interpreter = $interpreter
+EOF
+    }
+    else
+    {
+	opendir ADMINDIR, $admindir or quit "unable to open $admindir: $!";
+	while (defined($_ = readdir ADMINDIR))
+	{
+	    act_display $_ unless /^\.\.?$/;
+	}
+	closedir ADMINDIR;
+    }
+}
+
+# Now go.
+
+check_supported_os;
+
+my @modes = qw(install remove display enable disable);
+my @types = qw(magic extension);
+
+my %unique_options = (
+    'package'	=> \$package,
+    'mask'	=> \$mask,
+    'offset'	=> \$offset,
+);
+
+my %arguments = (
+    'admindir'	=> ['path' => \$admindir],
+    'install'	=> ['name' => \$name, 'path' => \$interpreter],
+    'remove'	=> ['name' => \$name, 'path' => \$interpreter],
+    'package'	=> ['package-name' => \$package],
+    'magic'	=> ['byte-sequence' => \$magic],
+    'extension'	=> ['extension' => \$extension],
+    'mask'	=> ['byte-sequence' => \$mask],
+    'offset'	=> ['offset' => \$offset],
+);
+
+my %parser = (
+    'help'	=> sub { usage; exit 0; },
+    'version'	=> sub { version; exit 0; },
+    'test'	=> sub { $test = 1; },
+    'install'	=> sub { -e $interpreter or
+			    warning "$interpreter not found, but continuing " .
+				    "anyway as you request"; },
+    'remove'	=> sub { -e $interpreter or
+			    warning "$interpreter not found, but continuing " .
+				    "anyway as you request"; },
+    'display'	=> sub { $name = (@ARGV >= 1) ? shift @ARGV : undef; },
+    'enable'	=> sub { $name = (@ARGV >= 1) ? shift @ARGV : undef; },
+    'disable'	=> sub { $name = (@ARGV >= 1) ? shift @ARGV : undef; },
+    'offset'	=> sub { $offset =~ /^\d+$/ or
+			    usage_quit 'offset must be a whole number'; },
+);
+
 while (defined($_ = shift))
 {
     last if /^--$/;
-    if (!/^--/)		    { usage_quit "unknown argument \'$_'"; }
-    elsif (/^--help$/)	    { usage; exit 0; }
-    elsif (/^--version$/)   { version; exit 0; }
-    elsif (/^--test$/)	    { $test = 1; }
-    elsif (/^--admindir$/)
+    if (!/^--(.+)$/)
     {
-	usage_quit "--admindir needs <path>" unless @ARGV >= 1;
-	$admindir = shift;
+	usage_quit "unknown argument '$_'";
+    }
+    my $option = $1;
+    my $is_mode = grep { $_ eq $option } @modes;
+    my $is_type = grep { $_ eq $option } @types;
+    my $has_args = exists $arguments{$option};
+
+    unless ($is_mode or $is_type or $has_args or exists $parser{$option})
+    {
+	usage_quit "unknown argument '$_'";
     }
 
-    # Main modes of operation.
-    elsif (/^--(install|remove)$/)
+    check_modes $option if $is_mode;
+    check_types $option if $is_type;
+
+    if (exists $unique_options{$option} and
+	defined ${$unique_options{$option}})
     {
-	check_modes;
-	usage_quit "--$1 needs <name> <path>" unless @ARGV >= 2;
-	$name = shift;
-	$interpreter = shift;
-	-e $interpreter or
-	    warning "$interpreter not found, but continuing anyway as you " .
-		    "request";
-	$mode = $1;
-    }
-    elsif (/^--display$/)
-    {
-	check_modes;
-	usage_quit '--display needs <name>' unless @ARGV >= 1;
-	$name = shift;
-	$mode = 'display';
-    }
-    elsif (/^--(enable|disable)$/)
-    {
-	check_modes;
-	$name = (@ARGV >= 1) ? shift : undef;
-	$mode = $1;
+	usage_quit "mode than one --$option option given";
     }
 
-    # Package name.
-    elsif (/^--package$/)
+    if ($has_args)
     {
-	usage_quit 'more than one --package option given' if defined $package;
-	usage_quit '--package needs <package-name>' unless @ARGV >= 1;
-	$package = shift;
+	my (@descs, @varrefs);
+	# Split into descriptions and variable references.
+	my $alt = 0;
+	foreach my $arg (@{$arguments{$option}})
+	{
+	    if (($alt = !$alt))	{ push @descs, "<$arg>"; }
+	    else		{ push @varrefs, $arg; }
+	}
+	usage_quit "--$option needs @descs" unless @ARGV >= @descs;
+	foreach my $varref (@varrefs) { $$varref = shift @ARGV; }
     }
 
-    # Binary format specifications.
-    elsif (/^--magic$/)
-    {
-	check_types;
-	usage_quit '--magic needs <byte-sequence>' unless @ARGV >= 1;
-	$magic = shift;
-	$type = 'magic';
-    }
-    elsif (/^--extension$/)
-    {
-	check_types;
-	usage_quit '--extension needs <extension>' unless @ARGV >= 1;
-	$extension = shift;
-	$type = 'extension';
-    }
+    &{$parser{$option}} if defined $parser{$option};
 
-    # --magic options.
-    elsif (/^--mask$/)
-    {
-	usage_quit 'more than one --mask option given' if defined $mask;
-	usage_quit '--mask needs <byte-sequence>' unless @ARGV >= 1;
-	$mask = shift;
-    }
-    elsif (/^--offset$/)
-    {
-	usage_quit 'more than one --offset option given' if defined $offset;
-	usage_quit '--offset needs <offset>' unless @ARGV >= 1;
-	$offset = shift;
-	$offset =~ /^\d+$/ or usage_quit 'offset must be a whole number';
-    }
-
-    else { usage_quit "unknown argument \'$_'"; }
+    $mode = $option if $is_mode;
+    $type = $option if $is_type;
 }
 
 $package = ':' unless defined $package;
@@ -350,104 +516,18 @@ if ($mode eq 'install')
 
 -d $admindir or quit "unable to open $admindir: $!";
 
-if ($mode eq 'install')
+my %actions = (
+    'install'	=> \&act_install,
+    'remove'	=> \&act_remove,
+    'display'	=> \&act_display,
+    'enable'	=> \&act_enable,
+    'disable'	=> \&act_disable,
+);
+
+unless (exists $actions{$mode})
 {
-    if (-f "$admindir/$name")
-    {
-	# For now we just silently zap any old versions with the same
-	# package name (has to be silent or upgrades are annoying). Maybe we
-	# should be more careful in the future.
-	my $oldpackage = (get_binfmt $name)[0];
-	unless ($package eq $oldpackage)
-	{
-	    $package = '<local>'	    if $package eq ':';
-	    $oldpackage = '<local>'	    if $oldpackage eq ':';
-	    quit "current package is $package, but binary format already " .
-		 "installed by $oldpackage.";
-	}
-	disable $name or quit "unable to disable binary format $name.";
-    }
-    if (-e "$procdir/$name")
-    {
-	# This is a bit tricky. If we get here, then the kernel knows about
-	# a format we don't. Either somebody has used binfmt_misc directly,
-	# or update-binfmts did something wrong. For now we do nothing;
-	# disabling and re-enabling all binary formats will fix this anyway.
-	# There may be a --force option in the future to help with problems
-	# like this.
-	quit "found manually created entry for $name in $procdir; " .
-	     "leaving it alone.";
-    }
-    if ($test)
-    {
-	print "installing the following binary format description:\n";
-	open BINFMT, '>&1' or quit "unable to dup standard output: $!";
-    }
-    else
-    {
-	unlink "$admindir/$name.tmp" or $! == ENOENT
-	    or quit "unable to ensure $admindir/$name.tmp nonexistent: $!";
-	open BINFMT, ">$admindir/$name.tmp"
-	    or quit "unable to open $admindir/$name.tmp for writing: $!";
-    }
-    print_binfmt $package;
-    print_binfmt $type;
-    print_binfmt (defined($offset) ? $offset : '');
-    print_binfmt (defined($magic) ? $magic : $extension);
-    print_binfmt (defined($mask) ? $mask : '');
-    print_binfmt $interpreter;
-    if ($test)
-    {
-	close BINFMT or quit "unable to close duplicated standard output: $!";
-    }
-    else
-    {
-	close BINFMT or quit "unable to close $admindir/$name.tmp: $!";
-	rename_mv "$admindir/$name.tmp", "$admindir/$name"
-	    or quit "unable to install $admindir/$name.tmp as " .
-		    "$admindir/$name: $!";
-    }
-    enable $name or quit "unable to enable binary format $name.";
+    usage_quit "unknown mode: $mode";
 }
 
-elsif ($mode eq 'remove')
-{
-    unless (-f "$admindir/$name")
-    {
-	# There may be a --force option in the future to allow entries like
-	# this to be removed; either they were created manually or
-	# update-binfmts was broken.
-	quit "$admindir/$name does not exist; nothing to do!";
-    }
-    my $oldpackage = (get_binfmt $name)[0];
-    unless ($package eq $oldpackage)
-    {
-	$package = '<local>'	    if $package eq ':';
-	$oldpackage = '<local>'	    if $oldpackage eq ':';
-	quit "current package is $package, but binary format already " .
-	     "installed by $oldpackage.";
-    }
-    disable $name or quit "unable to disable binary format $name.";
-    if ($test)
-    {
-	print "removing $admindir/$name\n";
-    }
-    else
-    {
-	unlink "$admindir/$name"
-	    or quit "unable to remove $admindir/$name: $!";
-    }
-}
-
-elsif ($mode eq 'display')
-{
-    open BINFMT, "$admindir/$name"
-	or quit "$name binary format not installed.";
-    local $/ = undef;
-    print <BINFMT>;
-    close BINFMT;
-}
-
-elsif ($mode eq 'enable')	{ enable $name; }
-elsif ($mode eq 'disable')	{ disable $name; }
+$actions{$mode}($name);
 

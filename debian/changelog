@@ -1,3 +1,29 @@
+binfmt-support (1.0.4) unstable; urgency=low
+
+  * Uploaded to Debian (closes: #78872).
+  * New maintainer address.
+  * Standards-Version: 3.5.1: no changes required.
+  * Use debhelper v3.
+  * Updated to new Perl policy.
+  * This is Architecture: all, so use the binary-indep target in
+    debian/rules rather than the binary-arch target.
+  * Started updating the version number automagically.
+  * Pointed URL in copyright file to the package pool.
+
+  * --display can now be called without an argument to display all known
+    binary formats and whether they are enabled; its output looks better,
+    too.
+  * Improved --test option.
+  * Don't hardcode ENOENT any more, anticipating future Hurd support.
+  * Print an error message on startup if the operating system isn't Linux
+    (although the package can still be installed).
+  * Recoded the option parsing and the actions into dispatch tables.
+  * Really test for existence of /usr/sbin/update-binfmts in init script.
+  * Fixed formatting error in man page (\x is an escape sequence).
+  * "Debian GNU/Linux" -> "Debian GNU".
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 17 Feb 2001 14:38:55 +0000
+
 binfmt-support (1.0.3) unstable; urgency=low
 
   * D'oh. update-binfmts should have been in /usr/sbin all along. Updated
@@ -16,14 +42,11 @@ binfmt-support (1.0.3) unstable; urgency=low
       idempotent.
   * Running --enable and/or --disable multiple times now doesn't create
     multiple entries in /proc with the same name either.
-  * Note that the "upload" changelog entry below wasn't uploaded before I
-    made this change; I'll close the WNPP bug manually when I need to.
 
  -- Colin Watson <cjw44@flatline.org.uk>  Sun, 10 Dec 2000 00:24:18 +0000
 
 binfmt-support (1.0.2) unstable; urgency=low
 
-  * Uploaded to Debian (closes: #78872).
   * Standards-Version: 3.2.1: no changes required.
   * Build-Depends-Indep: rather than Build-Depends:.
   * Use debhelper DH_COMPAT=2.
