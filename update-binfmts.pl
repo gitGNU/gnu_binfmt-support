@@ -638,7 +638,7 @@ while (defined($_ = shift))
 
     if (exists $unique_options{$option} and
 	defined ${$unique_options{$option}}) {
-	usage_quit "mode than one --$option option given";
+	usage_quit "more than one --$option option given";
     }
 
     if ($has_args) {
