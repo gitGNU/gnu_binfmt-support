@@ -191,7 +191,7 @@ sub load_binfmt_misc ()
 {
     unless (-d $procdir)
     {
-	if (system qw(/sbin/modprobe binfmt_misc))
+	if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe binfmt_misc))
 	{
 	    warning "Couldn't load the binfmt_misc module.";
 	    return 0;
@@ -242,7 +242,7 @@ sub unload_binfmt_misc ()
 	    return 0;
 	}
     }
-    if (system qw(/sbin/modprobe -r binfmt_misc))
+    if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe -r binfmt_misc))
     {
 	warning "Couldn't unload the binfmt_misc module.";
 	return 0;

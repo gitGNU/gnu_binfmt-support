@@ -1,3 +1,9 @@
+binfmt-support (1.0.6) unstable; urgency=low
+
+  * Check whether modprobe is available before using it (closes: #106090).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 21 Jul 2001 17:18:10 +0100
+
 binfmt-support (1.0.5) unstable; urgency=low
 
   * Updated to policy version 3.5.2: no changes required.
