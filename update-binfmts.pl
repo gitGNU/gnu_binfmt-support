@@ -226,7 +226,7 @@ sub load_binfmt_misc ()
     # If the style is 'filesystem', then we must already have the module
     # loaded, as binfmt_misc wouldn't show up in /proc/filesystems
     # otherwise.
-    if ($style eq 'procfs' and not -d $procdir) {
+    if ($style eq 'procfs' and not -f $register) {
 	if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe binfmt_misc)) {
 	    warning "Couldn't load the binfmt_misc module.";
 	    return 0;

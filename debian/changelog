@@ -1,3 +1,11 @@
+binfmt-support (1.1.5) unstable; urgency=low
+
+  * Check (again - how did I lose this?) for the existence of $register, not
+    $procdir, when deciding whether to try loading the kernel module
+    (closes: #134206).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue,  5 Mar 2002 21:37:32 +0000
+
 binfmt-support (1.1.4) unstable; urgency=low
 
   * The "phone me if you want a bug fixed" release. :-)
