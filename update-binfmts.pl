@@ -162,16 +162,36 @@ sub get_binfmt ($)
     return @binfmt;
 }
 
-# Actions.
+# Loading and unloading logic, which should cope with the various ways this
+# has been implemented.
 
-# Enable a binary format in the kernel.
-sub act_enable (;$);
-sub act_enable (;$)
+sub get_binfmt_style ()
 {
-    my $name = shift;
+    my $style;
+    open FS, '/proc/filesystems'
+	or quit "unable to open /proc/filesystems: $!";
+    if (grep m/\bbinfmt_misc\b/, <FS>)
+    {
+	# As of 2.4.3, the official Linux kernel still uses the original
+	# interface, but Alan Cox's patches add a binfmt_misc filesystem
+	# type which needs to be mounted separately. This may get into the
+	# official kernel in the future, so support both.
+	$style = 'filesystem';
+    }
+    else
+    {
+	# The traditional interface.
+	$style = 'procfs';
+    }
+    close FS;
+    return $style;
+}
+
+sub load_binfmt_misc ()
+{
     unless (-d $procdir)
     {
-	if (system('/sbin/modprobe', 'binfmt_misc'))
+	if (system qw(/sbin/modprobe binfmt_misc))
 	{
 	    warning "Couldn't load the binfmt_misc module.";
 	    return 0;
@@ -186,6 +206,58 @@ sub act_enable (;$)
 	    }
 	}
     }
+
+    my $style = get_binfmt_style;
+    # TODO: Is checking for $register the right way to go here?
+    if ($style eq 'filesystem' and not -f $register)
+    {
+	if (system qw(/bin/mount -t binfmt_misc none), $procdir)
+	{
+	    warning "Couldn't mount the binfmt_misc filesystem on $procdir.";
+	    return 0;
+	}
+	else
+	{
+	    unless (-f $register)
+	    {
+		warning "binfmt_misc filesystem mounted, but $register " .
+			"missing! Giving up.";
+		return 0;
+	    }
+	}
+    }
+
+    return 1;
+}
+
+sub unload_binfmt_misc ()
+{
+    my $style = get_binfmt_style;
+    if ($style eq 'filesystem')
+    {
+	if (system '/bin/umount', $procdir)
+	{
+	    warning "Couldn't unmount the binfmt_misc filesystem from " .
+		    "$procdir.";
+	    return 0;
+	}
+    }
+    if (system qw(/sbin/modprobe -r binfmt_misc))
+    {
+	warning "Couldn't unload the binfmt_misc module.";
+	return 0;
+    }
+    return 1;
+}
+
+# Actions.
+
+# Enable a binary format in the kernel.
+sub act_enable (;$);
+sub act_enable (;$)
+{
+    my $name = shift;
+    return 0 unless load_binfmt_misc;
     if (defined $name)
     {
 	unless ($test or -e "$admindir/$name")
@@ -277,6 +349,7 @@ sub act_disable (;$)
 	    act_disable $_ unless /^\.\.?$/ or not -e "$procdir/$_";
 	}
 	closedir ADMINDIR;
+	return 0 unless unload_binfmt_misc;
     }
     return 1;
 }

@@ -2,7 +2,7 @@ Source: binfmt-support
 Section: admin
 Priority: optional
 Maintainer: Colin Watson <cjwatson@debian.org>
-Standards-Version: 3.5.1
+Standards-Version: 3.5.2
 Build-Depends-Indep: debhelper (>= 3.0.5)
 
 Package: binfmt-support

@@ -1,3 +1,18 @@
+binfmt-support (1.0.5) unstable; urgency=low
+
+  * Updated to policy version 3.5.2: no changes required.
+  * Remove duplicate conffiles entry.
+
+  * Support recent -ac kernels which require binfmt_misc to be mounted as a
+    filesystem. For now, it seems neatest to mount it over
+    /proc/sys/fs/binfmt_misc, but that may change (especially as it's not
+    clear whether that directory will always exist).
+  * If disabling all binary formats, also unmount the filesystem if
+    necessary, and unload the kernel module. This will help upgrading in the
+    future if the kernel interface is changed again.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 27 Apr 2001 11:58:01 +0100
+
 binfmt-support (1.0.4) unstable; urgency=low
 
   * Uploaded to Debian (closes: #78872).

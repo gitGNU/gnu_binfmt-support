@@ -15,4 +15,8 @@ TODO list for binfmt-support; feel free to send patches. :)
 
   * Hurd support.
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 17 Feb 2001 13:00:11 +0000
+  * Allow packages to put entries in /usr/share/binfmts to avoid "what
+    happens if binfmt-support isn't installed?" questions - 'update-binfmts'
+    on its own would add everything in that directory.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 14 Mar 2001 00:00:14 +0000
