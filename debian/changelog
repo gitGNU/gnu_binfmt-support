@@ -1,3 +1,9 @@
+binfmt-support (1.2.1) UNRELEASED; urgency=low
+
+  * Cosmetic improvements to debian/rules.
+
+ -- Colin Watson <cjwatson@debian.org>  Mon,  3 Feb 2003 13:12:40 +0000
+
 binfmt-support (1.2.0) unstable; urgency=low
 
   * Support for userspace detectors, at the request of the Mono folks. See

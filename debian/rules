@@ -13,15 +13,12 @@ version = $(shell dpkg-parsechangelog | \
 
 dtmp = $(CURDIR)/debian/binfmt-support
 
-build: build-stamp
-build-stamp:
-	dh_testdir
-	touch build-stamp
+build:
 
 clean:
 	dh_testdir
 	dh_testroot
-	dh_clean build-stamp
+	dh_clean
 
 install: build
 	dh_testdir
