@@ -9,9 +9,9 @@ binfmt-support (1.2.0) unstable; urgency=low
 
   * Check that interpreters (and the new detectors) are executable.
   * Localize all filehandles.
-  * Drop /usr/doc symlink.
+  * Policy version 3.5.8: drop /usr/doc symlink.
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 17 Aug 2002 16:20:22 +0100
+ -- Colin Watson <cjwatson@debian.org>  Wed, 11 Dec 2002 13:46:12 +0000
 
 binfmt-support (1.1.5) unstable; urgency=low
 
