@@ -31,8 +31,11 @@ The prerm script should then do the reverse:
       --remove javawrapper /usr/bin/javawrapper
   fi
 
+You should add 'Conflicts: binfmt-support (<< 1.1.2)' to your control file
+to ensure that the --import option is available and working.
+
 binfmt-support currently has no effect on the Hurd, although it should
 install without any problems. Patches from Hurd experts to make translators
 look like this interface are welcome.
 
- -- Colin Watson <cjwatson@debian.org>  Sun,  6 Jan 2002 03:07:35 +0000
+ -- Colin Watson <cjwatson@debian.org>  Sat, 26 Jan 2002 19:05:24 +0000

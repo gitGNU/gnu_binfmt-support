@@ -1,3 +1,10 @@
+binfmt-support (1.1.3) unstable; urgency=low
+
+  * Recommend in README.Debian that packages using --import conflict with
+    binfmt-support (<< 1.1.2).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 26 Jan 2002 19:05:34 +0000
+
 binfmt-support (1.1.2) unstable; urgency=low
 
   * Fix thinko that meant some warnings weren't printed.
