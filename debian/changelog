@@ -1,8 +1,8 @@
-binfmt-support (1.2.3) UNRELEASED; urgency=low
+binfmt-support (1.2.3) unstable; urgency=low
 
   * Convert binfmt-support(8) to the -mdoc macro set.
 
- -- Colin Watson <cjwatson@debian.org>  Fri, 16 Jan 2004 19:38:32 +0000
+ -- Colin Watson <cjwatson@debian.org>  Thu,  1 Apr 2004 13:49:02 +0100
 
 binfmt-support (1.2.2) unstable; urgency=low
 
