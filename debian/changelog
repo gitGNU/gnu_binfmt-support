@@ -1,3 +1,14 @@
+binfmt-support (1.1.2) unstable; urgency=low
+
+  * Fix thinko that meant some warnings weren't printed.
+  * Make much more careful use of return codes throughout.
+  * When deciding whether to load the binfmt_misc module, check for the
+    existence of /proc/sys/fs/binfmt_misc/register, not merely the
+    directory. It seems that recent kernels can leave the directory hanging
+    around even after the module is removed (closes: #129400, #129621).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 19 Jan 2002 19:14:58 +0000
+
 binfmt-support (1.1.1) unstable; urgency=medium
 
   * Return non-fatally if binfmt_misc couldn't be loaded (see #129170).

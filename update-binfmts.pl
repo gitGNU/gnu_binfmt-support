@@ -196,8 +196,11 @@ sub get_binfmt ($)
 sub get_binfmt_style ()
 {
     my $style;
-    open FS, '/proc/filesystems'
-	or quit "unable to open /proc/filesystems: $!";
+    unless (open FS, '/proc/filesystems') {
+	# Weird. Assume procfs.
+	warning "unable to open /proc/filesystems: $!";
+	return 'procfs';
+    }
     if (grep m/\bbinfmt_misc\b/, <FS>) {
 	# As of 2.4.3, the official Linux kernel still uses the original
 	# interface, but Alan Cox's patches add a binfmt_misc filesystem
@@ -219,11 +222,12 @@ sub load_binfmt_misc ()
 	return 1;
     }
 
-    unless (-d $procdir) {
+    unless (-f $register) {
 	if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe binfmt_misc)) {
 	    warning "Couldn't load the binfmt_misc module.";
 	    return 0;
-	} elsif (not -d $procdir) {
+	}
+	unless (-d $procdir) {
 	    warning "binfmt_misc module seemed to load, but no $procdir",
 		    "directory! Giving up.";
 	    return 0;
@@ -236,16 +240,15 @@ sub load_binfmt_misc ()
 	if (system qw(/bin/mount -t binfmt_misc none), $procdir) {
 	    warning "Couldn't mount the binfmt_misc filesystem on $procdir.";
 	    return 0;
-	} else {
-	    unless (-f $register) {
-		warning "binfmt_misc filesystem mounted, but $register",
-			"missing! Giving up.";
-		return 0;
-	    }
 	}
     }
 
-    return 1;
+    if (-f $register) {
+	return 1;
+    } else {
+	warning "binfmt_misc initialized, but $register missing! Giving up.";
+	return 0;
+    }
 }
 
 sub unload_binfmt_misc ()
@@ -292,24 +295,31 @@ sub act_enable (;$)
 	    print "enable $name with the following format string:\n",
 		  " $regstring";
 	} else {
-	    open REGISTER, ">$register"
-		or warning "unable to open $register for writing: $!",
-		   return 0;
+	    unless (open REGISTER, ">$register") {
+		warning "unable to open $register for writing: $!";
+		return 0;
+	    }
 	    print REGISTER $regstring;
-	    close REGISTER
-		or warning "unable to close $register: $!", return 0;
+	    unless (close REGISTER) {
+		warning "unable to close $register: $!";
+		return 0;
+	    }
 	}
+	return 1;
     } else {
 	unless (opendir ADMINDIR, $admindir) {
 	    warning "unable to open $admindir: $!";
 	    return 0;
 	}
+	my $worked = 1;
 	for (readdir ADMINDIR) {
-	    act_enable $_ if -f "$admindir/$_" and not -e "$procdir/$_";
+	    if (-f "$admindir/$_" and not -e "$procdir/$_") {
+		$worked &= act_enable $_;
+	    }
 	}
 	closedir ADMINDIR;
+	return $worked;
     }
-    return 1;
 }
 
 # Disable a binary format in the kernel.
@@ -340,16 +350,21 @@ sub act_disable (;$)
 	if ($test) {
 	    print "disable $name\n";
 	} else {
-	    open PROCENTRY, ">$procdir/$name"
-		or warning "unable to open $procdir/$name for writing: $!",
-		   return 0;
+	    unless (open PROCENTRY, ">$procdir/$name") {
+		warning "unable to open $procdir/$name for writing: $!";
+		return 0;
+	    }
 	    print PROCENTRY -1;
-	    close PROCENTRY
-		or warning "unable to close $procdir/$name: $!", return 0;
+	    unless (close PROCENTRY) {
+		warning "unable to close $procdir/$name: $!";
+		return 0;
+	    }
 	    if (-e "$procdir/$name") {
-		quit "removal of $procdir/$name ignored by kernel!";
+		warning "removal of $procdir/$name ignored by kernel!";
+		return 0;
 	    }
 	}
+	return 1;
     }
     else
     {
@@ -357,13 +372,16 @@ sub act_disable (;$)
 	    warning "unable to open $admindir: $!";
 	    return 0;
 	}
+	my $worked = 1;
 	for (readdir ADMINDIR) {
-	    act_disable $_ if -f "$admindir/$_" and -e "$procdir/$_";
+	    if (-f "$admindir/$_" and -e "$procdir/$_") {
+		$worked &= act_disable $_;
+	    }
 	}
 	closedir ADMINDIR;
-	return 1 unless unload_binfmt_misc;
+	unload_binfmt_misc;	# ignore errors here
+	return $worked;
     }
-    return 1;
 }
 
 sub act_install ($)
@@ -378,10 +396,14 @@ sub act_install ($)
 	unless ($package eq $binfmt{package}) {
 	    $package = '<local>'	    if $package eq ':';
 	    $binfmt{package} = '<local>'    if $binfmt{package} eq ':';
-	    quit "current package is $package, but binary format already",
-		 "installed by $binfmt{package}";
+	    warning "current package is $package, but binary format already",
+		    "installed by $binfmt{package}";
+	    return 0;
 	}
-	act_disable $name or quit "unable to disable binary format $name";
+	unless (act_disable $name) {
+	    warning "unable to disable binary format $name";
+	    return 0;
+	}
     }
     if (-e "$procdir/$name" and not $test) {
 	# This is a bit tricky. If we get here, then the kernel knows about
@@ -395,16 +417,23 @@ sub act_install ($)
 	# vagaries of binfmt_misc mean that it isn't really possible to find
 	# out from userspace exactly what's going to happen if people have
 	# been bypassing update-binfmts.
-	quit "found manually created entry for $name in $procdir;",
-	     "leaving it alone";
+	warning "found manually created entry for $name in $procdir;",
+		"leaving it alone";
+	return 1;
     }
     if ($test) {
 	print "install the following binary format description:\n";
     } else {
-	unlink "$admindir/$name.tmp" or $! == ENOENT
-	    or quit "unable to ensure $admindir/$name.tmp nonexistent: $!";
-	open BINFMT, ">$admindir/$name.tmp"
-	    or quit "unable to open $admindir/$name.tmp for writing: $!";
+	unless (unlink "$admindir/$name.tmp") {
+	    if ($! != ENOENT) {
+		warning "unable to ensure $admindir/$name.tmp nonexistent: $!";
+		return 0;
+	    }
+	}
+	unless (open BINFMT, ">$admindir/$name.tmp") {
+	    warning "unable to open $admindir/$name.tmp for writing: $!";
+	    return 0;
+	}
     }
     print_binfmt $name, (package => $package, type => $type,
 			 offset  => (defined($offset) ? $offset : ''),
@@ -412,12 +441,21 @@ sub act_install ($)
 			 mask    => (defined($mask)   ? $mask   : ''),
 			 interpreter => $interpreter);
     unless ($test) {
-	close BINFMT or quit "unable to close $admindir/$name.tmp: $!";
-	rename_mv "$admindir/$name.tmp", "$admindir/$name"
-	    or quit "unable to install $admindir/$name.tmp as",
+	unless (close BINFMT) {
+	    warning "unable to close $admindir/$name.tmp: $!";
+	    return 0;
+	}
+	unless (rename_mv "$admindir/$name.tmp", "$admindir/$name") {
+	    warning "unable to install $admindir/$name.tmp as",
 		    "$admindir/$name: $!";
+	    return 0;
+	}
     }
-    act_enable $name or quit "unable to enable binary format $name";
+    unless (act_enable $name) {
+	warning "unable to enable binary format $name";
+	return 0;
+    }
+    return 1;
 }
 
 sub act_remove ($)
@@ -427,23 +465,32 @@ sub act_remove ($)
 	# There may be a --force option in the future to allow entries like
 	# this to be removed; either they were created manually or
 	# update-binfmts was broken.
-	quit "$admindir/$name does not exist; nothing to do!";
+	warning "$admindir/$name does not exist; nothing to do!";
+	return 0;
     }
     my %binfmt = get_binfmt $name;
     my $oldpackage = $binfmt{package};
     unless ($package eq $oldpackage) {
 	$package = '<local>'	    if $package eq ':';
 	$oldpackage = '<local>'	    if $oldpackage eq ':';
-	quit "current package is $package, but binary format already",
-	     "installed by $oldpackage";
+	warning "current package is $package, but binary format already",
+		"installed by $oldpackage; not removing.";
+	# I don't think this should be fatal.
+	return 1;
     }
-    act_disable $name or quit "unable to disable binary format $name";
+    unless (act_disable $name) {
+	warning "unable to disable binary format $name";
+	return 0;
+    }
     if ($test) {
 	print "remove $admindir/$name\n";
     } else {
-	unlink "$admindir/$name"
-	    or quit "unable to remove $admindir/$name: $!";
+	unless (unlink "$admindir/$name") {
+	    warning "unable to remove $admindir/$name: $!";
+	    return 0;
+	}
     }
+    return 1;
 }
 
 sub act_import (;$);
@@ -465,7 +512,10 @@ sub act_import (;$)
 	}
 
 	my %import = get_import $name;
-	return 0 unless scalar keys %import;
+	unless (scalar keys %import) {
+	    warning "couldn't find information about '$id' to import";
+	    return 0;
+	}
 	$package     = $import{package};
 	$magic       = $import{magic};
 	$extension   = $import{extension};
@@ -478,7 +528,8 @@ sub act_import (;$)
 	    if ($binfmt{package} eq ':') {
 		# Installed version was installed manually, so don't import
 		# over it.
-		return 0;
+		warning "preserving local changes to $id";
+		return 1;
 	    } else {
 		# Installed version was installed by a package, so it should
 		# be OK to replace it.
@@ -524,16 +575,21 @@ sub act_import (;$)
 	}
 
 	act_install $id;
+	return 1;
     } else {
 	unless (opendir IMPORTDIR, $importdir) {
 	    warning "unable to open $importdir: $!";
 	    return 0;
 	}
+	my $worked = 1;
 	for (readdir IMPORTDIR) {
 	    next unless -f "$importdir/$_";
-	    act_import $_ if -f "$importdir/$_";
+	    if (-f "$importdir/$_") {
+		$worked &= act_import $_;
+	    }
 	}
 	closedir IMPORTDIR;
+	return $worked;
     }
 }
 
@@ -561,6 +617,7 @@ EOF
 	}
 	closedir ADMINDIR;
     }
+    return 1;
 }
 
 # Now go.
@@ -690,5 +747,8 @@ unless (exists $actions{$mode}) {
     usage_quit "unknown mode: $mode";
 }
 
-$actions{$mode}($name);
-
+if ($actions{$mode}($name)) {
+    exit 0;
+} else {
+    quit 'exiting due to previous errors';
+}
