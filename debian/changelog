@@ -1,3 +1,18 @@
+binfmt-support (1.2.0) unstable; urgency=low
+
+  * Support for userspace detectors, at the request of the Mono folks. See
+    /usr/share/doc/binfmt-support/detectors for the rationale and design.
+
+    This involved substantial rearrangements of the code, so we now have a
+    couple of Perl modules in the Binfmt:: namespace. They don't have a
+    published interface, so writing code using them directly is a bad idea.
+
+  * Check that interpreters (and the new detectors) are executable.
+  * Localize all filehandles.
+  * Drop /usr/doc symlink.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 17 Aug 2002 16:20:22 +0100
+
 binfmt-support (1.1.5) unstable; urgency=low
 
   * Check (again - how did I lose this?) for the existence of $register, not

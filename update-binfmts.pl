@@ -1,53 +1,55 @@
 #! /usr/bin/perl -w
 
-# Copyright (c) 2000-2002 Colin Watson <cjwatson@debian.org>.
+# Copyright (c) 2000, 2001, 2002 Colin Watson <cjwatson@debian.org>.
 # See update-binfmts(8) for documentation.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use strict;
 
-use Errno qw(ENOENT);
 use POSIX qw(uname);
 use Text::Wrap;
+use Binfmt::Lib qw($admindir $importdir $procdir $auxdir quit warning);
+use Binfmt::Format;
 
 my $VERSION = '@VERSION@';
 
 $Text::Wrap::columns = 79;
 
-my $test;
-my %test_installed;
-my $importdir = '/usr/share/binfmts';
-my $admindir = '/var/lib/binfmts';
-my $package;
-my $mode;
-my ($name, $interpreter);
-my $type;
-my ($magic, $mask, $offset, $extension);
+use vars qw($test);
 
-my $procdir = '/proc/sys/fs/binfmt_misc';
 my $register = "$procdir/register";
+my $status = "$procdir/status";
+my $run_detectors = "$auxdir/run-detectors";
 
-local *BINFMT;
+my %formats;
 
 # Various "print something and exit" routines.
-
-sub quit ($;@)
-{
-    print STDERR wrap '', '', 'update-binfmts:', @_, "\n";
-    exit 2;
-}
 
 sub version ()
 {
     print "update-binfmts $VERSION.\n"
-	or quit "unable to write version message: $!";
+	or die "unable to write version message: $!";
 }
 
 sub usage ()
 {
     version;
     print <<EOF
-Copyright (c) 2000-2002 Colin Watson. This is free software; see the GNU
-General Public License version 2 or later for copying conditions.
+Copyright (c) 2000, 2001, 2002 Colin Watson. This is free software; see
+the GNU General Public License version 2 or later for copying conditions.
 
 Usage:
 
@@ -63,6 +65,11 @@ Usage:
     --magic <byte-sequence> [--mask <byte-sequence>] [--offset <offset>]
     --extension <extension>
 
+  The following argument may be added to any <spec> to have a userspace
+  process determine whether the file should be handled:
+
+    --detector <path>
+
 Options:
 
     --package <package-name>    for --install and --remove, specify the
@@ -76,12 +83,14 @@ Options:
     --version                   output version and exit
 
 EOF
-	or quit "unable to write usage message: $!";
+	or die "unable to write usage message: $!";
 }
 
 sub usage_quit ($;@)
 {
-    print STDERR wrap '', '', 'update-binfmts:', @_, "\n\n";
+    my $me = $0;
+    $me =~ s#.*/##;
+    print STDERR wrap '', '', "$me:", @_, "\n";
     usage;
     exit 2;
 }
@@ -101,50 +110,18 @@ EOF
     exit 2;
 }
 
-# Something has gone wrong, but not badly enough for us to give up.
-sub warning ($;@) {
-    print STDERR wrap '', '', 'update-binfmts: warning:', @_, "\n";
-}
-
 # Make sure options are unambiguous.
 
-sub check_modes ($)
+sub check_modes ($$)
 {
-    return unless $mode;
-    usage_quit "two modes given: --$mode and $_[0]";
+    return unless $_[0];
+    usage_quit "two modes given: --$_[0] and $_[1]";
 }
 
-sub check_types ($)
+sub check_types ($$)
 {
-    return unless $type;
-    usage_quit "two binary format specifications given: --$type and $_[0]";
-}
-
-sub print_binfmt ($%)
-{
-    my ($name, %binfmt) = @_;
-    for (keys %binfmt) {
-	if ($binfmt{$_} =~ /\n/) {
-	    quit "newlines prohibited in update-binfmts files ($binfmt{$_})";
-	}
-    }
-
-    my %order = (package => 0, type => 1, offset => 2,
-		 magic => 3,   mask => 4, interpreter => 5);
-    my $sort_binfmt = sub {
-	return $order{$a} <=> $order{$b};
-    };
-
-    if ($test) {
-	for (sort $sort_binfmt keys %binfmt) {
-	    printf "%12s = %s\n", $_, $binfmt{$_};
-	}
-	%{$test_installed{$name}} = %binfmt;
-    } else {
-	for (sort $sort_binfmt keys %binfmt) {
-	    print BINFMT "$binfmt{$_}\n";
-	}
-    }
+    return unless $_[0];
+    usage_quit "two binary format specifications given: --$_[0] and $_[1]";
 }
 
 sub rename_mv ($$)
@@ -157,6 +134,7 @@ sub get_import ($)
 {
     my $name = shift;
     my %import;
+    local *IMPORT;
     unless (open IMPORT, "< $name") {
 	warning "unable to open $name: $!";
 	return;
@@ -167,27 +145,8 @@ sub get_import ($)
 	my ($name, $value) = split ' ', $_, 2;
 	$import{lc $name} = $value;
     }
+    close IMPORT;
     return %import;
-}
-
-sub get_binfmt ($)
-{
-    my $name = shift;
-    if ($test and exists $test_installed{$name}) {
-	return %{$test_installed{$name}};
-    }
-    my %binfmt;
-    open BINFMT, "$admindir/$name"
-	or quit "unable to open $admindir/$name: $!";
-    $binfmt{package}     = <BINFMT>;
-    $binfmt{type}        = <BINFMT>;
-    $binfmt{offset}      = <BINFMT>;
-    $binfmt{magic}       = <BINFMT>;
-    $binfmt{mask}        = <BINFMT>;
-    $binfmt{interpreter} = <BINFMT>;
-    close BINFMT;
-    chomp $binfmt{$_} for keys %binfmt;
-    return %binfmt;
 }
 
 # Loading and unloading logic, which should cope with the various ways this
@@ -196,6 +155,7 @@ sub get_binfmt ($)
 sub get_binfmt_style ()
 {
     my $style;
+    local *FS;
     unless (open FS, '/proc/filesystems') {
 	# Weird. Assume procfs.
 	warning "unable to open /proc/filesystems: $!";
@@ -249,6 +209,13 @@ sub load_binfmt_misc ()
     }
 
     if (-f $register) {
+	local *STATUS;
+	if (open STATUS, "> $status") {
+	    print STATUS "1\n";
+	    close STATUS;
+	} else {
+	    warning "unable to open $status for writing: $!";
+	}
 	return 1;
     } else {
 	warning "binfmt_misc initialized, but $register missing! Giving up.";
@@ -273,7 +240,7 @@ sub unload_binfmt_misc ()
 	}
     }
     if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe -r binfmt_misc)) {
-	warning "Couldn't unload the binfmt_misc module.";
+	warning "Couldn't unload the binfmt_misc module: ", ($? >> 8);
 	return 0;
     }
     return 1;
@@ -288,18 +255,40 @@ sub act_enable (;$)
     my $name = shift;
     return 1 unless load_binfmt_misc;
     if (defined $name) {
-	unless ($test or -e "$admindir/$name") {
+	unless ($test or exists $formats{$name}) {
 	    warning "$name not in database of installed binary formats.";
 	    return 0;
 	}
-	my %binfmt = get_binfmt $name;
-	my $type = ($binfmt{type} eq 'magic') ? 'M' : 'E';
-	my $regstring = ":$name:$type:$binfmt{offset}:$binfmt{magic}" .
-			":$binfmt{mask}:$binfmt{interpreter}:\n";
+	my $binfmt = $formats{$name};
+	my $type = ($binfmt->{type} eq 'magic') ? 'M' : 'E';
+
+	my $need_detector = (defined $binfmt->{detector} and
+			     length $binfmt->{detector}) ? 1 : 0;
+	unless ($need_detector) {
+	    # Scan the format database to see if anything else uses the same
+	    # spec as us. If so, assume that we need a detector, effectively
+	    # /bin/true. Don't actually set $binfmt->{detector} though,
+	    # since run-detectors optimizes the case of empty detectors and
+	    # "runs" them last.
+	    for my $id (keys %formats) {
+		next if $id eq $name;
+		if ($binfmt->equals ($formats{$id})) {
+		    $need_detector = 1;
+		    last;
+		}
+	    }
+	}
+	# Fake the interpreter if we need a userspace detector program.
+	my $interpreter = $need_detector ? $run_detectors
+					 : $binfmt->{interpreter};
+
+	my $regstring = ":$name:$type:$binfmt->{offset}:$binfmt->{magic}" .
+			":$binfmt->{mask}:$interpreter:\n";
 	if ($test) {
 	    print "enable $name with the following format string:\n",
 		  " $regstring";
 	} else {
+	    local *REGISTER;
 	    unless (open REGISTER, ">$register") {
 		warning "unable to open $register for writing: $!";
 		return 0;
@@ -312,17 +301,12 @@ sub act_enable (;$)
 	}
 	return 1;
     } else {
-	unless (opendir ADMINDIR, $admindir) {
-	    warning "unable to open $admindir: $!";
-	    return 0;
-	}
 	my $worked = 1;
-	for (readdir ADMINDIR) {
-	    if (-f "$admindir/$_" and not -e "$procdir/$_") {
-		$worked &= act_enable $_;
+	for my $id (keys %formats) {
+	    unless (-e "$procdir/$id") {
+		$worked &= act_enable $id;
 	    }
 	}
-	closedir ADMINDIR;
 	return $worked;
     }
 }
@@ -355,6 +339,7 @@ sub act_disable (;$)
 	if ($test) {
 	    print "disable $name\n";
 	} else {
+	    local *PROCENTRY;
 	    unless (open PROCENTRY, ">$procdir/$name") {
 		warning "unable to open $procdir/$name for writing: $!";
 		return 0;
@@ -373,36 +358,32 @@ sub act_disable (;$)
     }
     else
     {
-	unless (opendir ADMINDIR, $admindir) {
-	    warning "unable to open $admindir: $!";
-	    return 0;
-	}
 	my $worked = 1;
-	for (readdir ADMINDIR) {
-	    if (-f "$admindir/$_" and -e "$procdir/$_") {
-		$worked &= act_disable $_;
+	for my $id (keys %formats) {
+	    if (-e "$procdir/$id") {
+		$worked &= act_disable $id;
 	    }
 	}
-	closedir ADMINDIR;
 	unload_binfmt_misc;	# ignore errors here
 	return $worked;
     }
 }
 
-sub act_install ($)
+sub act_install ($$)
 {
     my $name = shift;
-    if (-f "$admindir/$name") {
+    my $binfmt = shift;
+    if (exists $formats{$name}) {
 	# For now we just silently zap any old versions with the same
 	# package name (has to be silent or upgrades are annoying). Maybe we
 	# should be more careful in the future.
-	my %binfmt = get_binfmt $name;
-	my $oldpackage = $binfmt{package};
-	unless ($package eq $binfmt{package}) {
-	    $package = '<local>'	    if $package eq ':';
-	    $binfmt{package} = '<local>'    if $binfmt{package} eq ':';
+	my $package = $binfmt->{package};
+	my $old_package = $formats{$name}{package};
+	unless ($package eq $old_package) {
+	    $package     = '<local>' if $package eq ':';
+	    $old_package = '<local>' if $old_package eq ':';
 	    warning "current package is $package, but binary format already",
-		    "installed by $binfmt{package}";
+		    "installed by $old_package";
 	    return 0;
 	}
 	unless (act_disable $name) {
@@ -426,36 +407,19 @@ sub act_install ($)
 		"leaving it alone";
 	return 1;
     }
+
     if ($test) {
 	print "install the following binary format description:\n";
+	$binfmt->dump_stdout;
     } else {
-	unless (unlink "$admindir/$name.tmp") {
-	    if ($! != ENOENT) {
-		warning "unable to ensure $admindir/$name.tmp nonexistent: $!";
-		return 0;
-	    }
-	}
-	unless (open BINFMT, ">$admindir/$name.tmp") {
-	    warning "unable to open $admindir/$name.tmp for writing: $!";
-	    return 0;
-	}
-    }
-    print_binfmt $name, (package => $package, type => $type,
-			 offset  => (defined($offset) ? $offset : ''),
-			 magic   => (defined($magic)  ? $magic  : $extension),
-			 mask    => (defined($mask)   ? $mask   : ''),
-			 interpreter => $interpreter);
-    unless ($test) {
-	unless (close BINFMT) {
-	    warning "unable to close $admindir/$name.tmp: $!";
-	    return 0;
-	}
+	$binfmt->write ("$admindir/$name.tmp") or return 0;
 	unless (rename_mv "$admindir/$name.tmp", "$admindir/$name") {
 	    warning "unable to install $admindir/$name.tmp as",
 		    "$admindir/$name: $!";
 	    return 0;
 	}
     }
+    $formats{$name} = $binfmt;
     unless (act_enable $name) {
 	warning "unable to enable binary format $name";
 	return 0;
@@ -463,23 +427,23 @@ sub act_install ($)
     return 1;
 }
 
-sub act_remove ($)
+sub act_remove ($$)
 {
     my $name = shift;
-    unless (-f "$admindir/$name") {
+    my $package = shift;
+    unless (exists $formats{$name}) {
 	# There may be a --force option in the future to allow entries like
 	# this to be removed; either they were created manually or
 	# update-binfmts was broken.
 	warning "$admindir/$name does not exist; nothing to do!";
 	return 0;
     }
-    my %binfmt = get_binfmt $name;
-    my $oldpackage = $binfmt{package};
-    unless ($package eq $oldpackage) {
-	$package = '<local>'	    if $package eq ':';
-	$oldpackage = '<local>'	    if $oldpackage eq ':';
+    my $old_package = $formats{$name}{package};
+    unless ($package eq $old_package) {
+	$package     = '<local>' if $package eq ':';
+	$old_package = '<local>' if $old_package eq ':';
 	warning "current package is $package, but binary format already",
-		"installed by $oldpackage; not removing.";
+		"installed by $old_package; not removing.";
 	# I don't think this should be fatal.
 	return 1;
     }
@@ -494,6 +458,7 @@ sub act_remove ($)
 	    warning "unable to remove $admindir/$name: $!";
 	    return 0;
 	}
+	delete $formats{$name};
     }
     return 1;
 }
@@ -521,16 +486,9 @@ sub act_import (;$)
 	    warning "couldn't find information about '$id' to import";
 	    return 0;
 	}
-	$package     = $import{package};
-	$magic       = $import{magic};
-	$extension   = $import{extension};
-	$mask        = $import{mask};
-	$offset      = $import{offset};
-	$interpreter = $import{interpreter};
 
-	if (-f "$admindir/$id") {
-	    my %binfmt = get_binfmt $id;
-	    if ($binfmt{package} eq ':') {
+	if (exists $formats{$id}) {
+	    if ($formats{$id}{package} eq ':') {
 		# Installed version was installed manually, so don't import
 		# over it.
 		warning "preserving local changes to $id";
@@ -541,47 +499,21 @@ sub act_import (;$)
 	    }
 	}
 
-	# TODO: This duplicates the verification code below.
-	unless (defined $package) {
+	# TODO: This duplicates the verification code below slightly.
+	unless (defined $import{package}) {
 	    warning "$name: required 'package' line missing";
 	    return 0;
 	}
 
-	if (defined $magic) {
-	    if (defined $extension) {
-		warning "$name: can't use both 'magic' and 'extension'";
-		return 0;
-	    } else {
-		$type = 'magic';
-	    }
-	} else {
-	    if (defined $extension) {
-		$type = 'extension';
-	    } else {
-		warning "$name: 'magic' or 'extension' line required";
-		return 0;
-	    }
+	unless (-x $import{interpreter}) {
+	    warning "$name: no executable $import{interpreter} found, but",
+		    "continuing anyway as you request";
 	}
 
-	if ($type eq 'extension') {
-	    if (defined $mask) {
-		warning "$name: can't use 'mask' with 'extension'";
-		return 0;
-	    }
-	    if (defined $offset) {
-		warning "$name: can't use 'offset' with 'extension'";
-		return 0;
-	    }
-	}
-
-	unless (-e $interpreter) {
-	    warning "$name: $interpreter not found, but continuing anyway as ",
-		    "you request";
-	}
-
-	act_install $id;
+	act_install $id, Binfmt::Format->new ($name, %import);
 	return 1;
     } else {
+	local *IMPORTDIR;
 	unless (opendir IMPORTDIR, $importdir) {
 	    warning "unable to open $importdir: $!";
 	    return 0;
@@ -605,20 +537,21 @@ sub act_display (;$)
     if (defined $name) {
 	print "$name (", (-e "$procdir/$name" ? 'enabled' : 'disabled'),
 	      "):\n";
-	my %binfmt = get_binfmt $name;
-	my $package = $binfmt{package} eq ':' ? '<local>' : $binfmt{package};
+	my $binfmt = $formats{$name};
+	my $package = $binfmt->{package} eq ':' ? '<local>'
+						: $binfmt->{package};
 	print <<EOF;
      package = $package
-        type = $binfmt{type}
-      offset = $binfmt{offset}
-       magic = $binfmt{magic}
-        mask = $binfmt{mask}
- interpreter = $binfmt{interpreter}
+        type = $binfmt->{type}
+      offset = $binfmt->{offset}
+       magic = $binfmt->{magic}
+        mask = $binfmt->{mask}
+ interpreter = $binfmt->{interpreter}
+    detector = $binfmt->{detector}
 EOF
     } else {
-	opendir ADMINDIR, $admindir or quit "unable to open $admindir: $!";
-	for (readdir ADMINDIR) {
-	    act_display $_ unless /^\.\.?$/;
+	for my $id (keys %formats) {
+	    act_display $id;
 	}
 	closedir ADMINDIR;
     }
@@ -632,22 +565,28 @@ check_supported_os;
 my @modes = qw(install remove import display enable disable);
 my @types = qw(magic extension);
 
+my ($package, $name);
+my ($mode, $type);
+my %spec;
+
 my %unique_options = (
     'package'	=> \$package,
-    'mask'	=> \$mask,
-    'offset'	=> \$offset,
+    'mask'	=> \$spec{mask},
+    'offset'	=> \$spec{offset},
+    'detector'  => \$spec{detector},
 );
 
 my %arguments = (
     'admindir'	=> ['path' => \$admindir],
     'importdir'	=> ['path' => \$importdir],
-    'install'	=> ['name' => \$name, 'path' => \$interpreter],
-    'remove'	=> ['name' => \$name, 'path' => \$interpreter],
+    'install'	=> ['name' => \$name, 'path' => \$spec{interpreter}],
+    'remove'	=> ['name' => \$name, 'path' => \$spec{interpreter}],
     'package'	=> ['package-name' => \$package],
-    'magic'	=> ['byte-sequence' => \$magic],
-    'extension'	=> ['extension' => \$extension],
-    'mask'	=> ['byte-sequence' => \$mask],
-    'offset'	=> ['offset' => \$offset],
+    'magic'	=> ['byte-sequence' => \$spec{magic}],
+    'extension'	=> ['extension' => \$spec{extension}],
+    'mask'	=> ['byte-sequence' => \$spec{mask}],
+    'offset'	=> ['offset' => \$spec{offset}],
+    'detector'  => ['path' => \$spec{detector}],
 );
 
 my %parser = (
@@ -655,22 +594,27 @@ my %parser = (
     'version'	=> sub { version; exit 0; },
     'test'	=> sub { $test = 1; },
     'install'	=> sub {
-	-e $interpreter
-	    or warning "$interpreter not found, but continuing anyway as you",
-		       "request";
+	-x $spec{interpreter}
+	    or warning "no executable $spec{interpreter} found, but",
+		       "continuing anyway as you request";
     },
     'remove'	=> sub {
-	-e $interpreter
-	    or warning "$interpreter not found, but continuing anyway as you",
-		       "request";
+	-x $spec{interpreter}
+	    or warning "no executable $spec{interpreter} found, but",
+		       "continuing anyway as you request";
     },
     'import'	=> sub { $name = (@ARGV >= 1) ? shift @ARGV : undef; },
     'display'	=> sub { $name = (@ARGV >= 1) ? shift @ARGV : undef; },
     'enable'	=> sub { $name = (@ARGV >= 1) ? shift @ARGV : undef; },
     'disable'	=> sub { $name = (@ARGV >= 1) ? shift @ARGV : undef; },
     'offset'	=> sub {
-	$offset =~ /^\d+$/
+	$spec{offset} =~ /^\d+$/
 	    or usage_quit 'offset must be a whole number';
+    },
+    'detector'  => sub {
+	-x $spec{detector}
+	    or warning "no executable $spec{detector} found, but",
+		       "continuing anyway as you request";
     },
 );
 
@@ -689,8 +633,8 @@ while (defined($_ = shift))
 	usage_quit "unknown argument '$_'";
     }
 
-    check_modes $option if $is_mode;
-    check_types $option if $is_type;
+    check_modes $mode, $option if $is_mode;
+    check_types $type, $option if $is_type;
 
     if (exists $unique_options{$option} and
 	defined ${$unique_options{$option}}) {
@@ -722,37 +666,44 @@ unless (defined $mode) {
 	       '--enable, --disable';
 }
 
+my $binfmt;
 if ($mode eq 'install') {
     defined $type or usage_quit '--install requires a <spec> option';
-    if ($type eq 'extension') {
-	defined $magic
-	    and usage_quit "can't use both --magic and --extension";
-	defined $mask	and usage_quit "can't use --mask with --extension";
-	defined $offset	and usage_quit "can't use --offset with --extension";
-    }
     if ($name =~ /^(\.\.?|register|status)$/) {
 	usage_quit "binary format name '$name' is reserved";
     }
+    $binfmt = Binfmt::Format->new ($name, package => $package, type => $type,
+				   %spec);
 }
 
-unless (-d $admindir) {
+local *ADMINDIR;
+unless (opendir ADMINDIR, $admindir) {
     quit "unable to open $admindir: $!";
 }
+for my $name (readdir ADMINDIR) {
+    if (-f "$admindir/$name") {
+	my $format = Binfmt::Format->load ($name, "$admindir/$name");
+	$formats{$name} = $format if defined $format;
+    }
+}
+closedir ADMINDIR;
 
 my %actions = (
-    'install'	=> \&act_install,
-    'remove'	=> \&act_remove,
-    'import'	=> \&act_import,
-    'display'	=> \&act_display,
-    'enable'	=> \&act_enable,
-    'disable'	=> \&act_disable,
+    'install'	=> [\&act_install, $binfmt],
+    'remove'	=> [\&act_remove, $package],
+    'import'	=> [\&act_import],
+    'display'	=> [\&act_display],
+    'enable'	=> [\&act_enable],
+    'disable'	=> [\&act_disable],
 );
 
 unless (exists $actions{$mode}) {
     usage_quit "unknown mode: $mode";
 }
 
-if ($actions{$mode}($name)) {
+my @actargs = @{$actions{$mode}};
+my $actsub = shift @actargs;
+if ($actsub->($name, @actargs)) {
     exit 0;
 } else {
     quit 'exiting due to previous errors';

@@ -73,11 +73,13 @@ action should be used instead.
 .TP
 .BI \-\-admindir " directory"
 Specifies the administrative directory, when this is to be different from
-the default of /var/lib/binfmts.
+the default of
+.IR /var/lib/binfmts .
 .TP
 .BI \-\-importdir " directory"
 Specifies the directory from which packaged binary formats are imported,
-when this is to be different from the default of /usr/share/binfmts.
+when this is to be different from the default of
+.IR /usr/share/binfmts .
 .TP
 .B \-\-test
 Don't do anything, just demonstrate what would be done.
@@ -130,7 +132,8 @@ is given.
 If
 .I name
 is not a full path, it is assumed to be a file in the import directory
-(/usr/share/binfmts by default).
+.RI ( /usr/share/binfmts
+by default).
 See
 .B FORMAT FILES
 below for the required contents of these files.
@@ -199,6 +202,14 @@ This matches all files whose names end in
 .RI \(lq. extension \(rq.
 Hexadecimal escapes are not recognized here.
 Extension matching is case-sensitive.
+.TP
+.BI \-\-detector " path"
+If this option is used, a userspace detector program will be used to check
+whether the file is suitable for this interpreter.
+This may be used when the binary format is more complex than can be handled
+by the kernel's format specifications alone.
+The program should return an exit code of zero if the file is appropriate
+and non-zero otherwise.
 .SS "FORMAT FILES"
 A format file is a sequence of options, one per line, corresponding roughly
 to the options given to an

@@ -22,7 +22,7 @@ set -e
 case "$1" in
   start)
     echo -n "Enabling $DESC: "
-	update-binfmts --enable
+    update-binfmts --enable
     echo "$NAME."
     ;;
 

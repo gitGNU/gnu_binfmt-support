@@ -1,3 +1,5 @@
 usr/sbin
+usr/share/binfmt-support
 usr/share/binfmts
+usr/share/perl5/Binfmt
 var/lib/binfmts
