@@ -14,15 +14,21 @@ should put something like the following in your postinst script (this
 example is similar to what the javawrapper package does):
 
   if [ configure = "$1" ]; then
-    update-binfmts --package javawrapper \
+    /usr/sbin/update-binfmts --package javawrapper \
       --install javawrapper /usr/bin/javawrapper --magic '\xca\xfe\xba\xbe'
   fi
 
 The prerm script should then do the reverse:
 
   if [ remove = "$1" ]; then
-    update-binfmts --package javawrapper \
+    /usr/sbin/update-binfmts --package javawrapper \
       --remove javawrapper /usr/bin/javawrapper
   fi
 
- -- Colin Watson <cjw44@flatline.org.uk>  Tue, 16 May 2000 23:46:15 +0100
+If you choose not to have a hard dependency on binfmt-support (for
+instance, it won't work on the Hurd yet), you should use a check like:
+
+  if [ configure = "$1" -a -x /usr/sbin/update-binfmts ]; then
+    ...
+
+ -- Colin Watson <cjw44@flatline.org.uk>  Wed,  6 Dec 2000 09:08:14 +0000

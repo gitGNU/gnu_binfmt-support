@@ -1,3 +1,26 @@
+binfmt-support (1.0.3) unstable; urgency=low
+
+  * D'oh. update-binfmts should have been in /usr/sbin all along. Updated
+    README.Debian to account for this.
+  * Included the GPL in the source package.
+  * Improved --install/--remove logic:
+    - Remove entries even if their interpreter has changed, otherwise
+      deliberately changing interpreters becomes rather awkward. We only
+      need to make sure that the package is the same.
+    - --install will now disable existing /proc entries as long as
+      /var/lib/binfmts is consistent. Without this, you could sometimes end
+      up with multiple entries in /proc with the same name, due to a kernel
+      bug. Added some extra checking to make this even less likely.
+    - Don't warn about there being no /proc entry when removing. This can
+      easily happen on upgrades, and it also helps maintainer scripts to be
+      idempotent.
+  * Running --enable and/or --disable multiple times now doesn't create
+    multiple entries in /proc with the same name either.
+  * Note that the "upload" changelog entry below wasn't uploaded before I
+    made this change; I'll close the WNPP bug manually when I need to.
+
+ -- Colin Watson <cjw44@flatline.org.uk>  Sun, 10 Dec 2000 00:24:18 +0000
+
 binfmt-support (1.0.2) unstable; urgency=low
 
   * Uploaded to Debian (closes: #78872).

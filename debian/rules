@@ -27,7 +27,7 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/binfmt-support.
-	install update-binfmts.pl debian/binfmt-support/usr/bin/update-binfmts
+	install update-binfmts.pl debian/binfmt-support/usr/sbin/update-binfmts
 
 
 # Build architecture-independent files here.

@@ -7,7 +7,7 @@ use strict;
 
 sub ENOENT () { 2; }
 
-my $VERSION = '1.0.2';
+my $VERSION = '1.0.3';
 
 my $errstarted = 0;
 my $test;
@@ -181,7 +181,7 @@ sub enable (;$)
 	    or warning "unable to open $admindir: $!", return 0;
 	while (defined($_ = readdir ADMINDIR))
 	{
-	    enable $_ unless /^\.\.?$/;
+	    enable $_ unless /^\.\.?$/ || -e "$procdir/$_";
 	}
 	closedir ADMINDIR;
     }
@@ -195,43 +195,24 @@ sub disable (;$)
     return 1 unless -d $procdir;    # We're disabling anyway, so we don't mind
     if (defined $name)
     {
-	unless (-e "$admindir/$name")
-	{
-	    warning "$name not in database of installed binary formats.";
-	    return 0;
-	}
 	unless (-e "$procdir/$name")
 	{
-	    warning "$name binary format not enabled.";
-	    return 0;
+	    # Don't warn in this circumstance, as it could happen e.g. when
+	    # binfmt-support and a package depending on it are upgraded at
+	    # the same time, so we get called when stopped. Just pretend
+	    # that the disable operation succeeded.
+	    return 1;
 	}
 
-	open PROCENTRY, "$procdir/$name"
-	    or warning "unable to open $procdir/$name: $!", return 0;
-	my ($package, $type, $offset, $magic, $mask, $interpreter) =
-	    get_binfmt $name;
-	my $cur_interpreter;
-	while (<PROCENTRY>)
-	{
-	    if (/^interpreter (.*)/)
-	    {
-		$cur_interpreter = $1;
-		last;
-	    }
-	}
-	close PROCENTRY;
-	unless (defined $cur_interpreter)
-	{
-	    warning "$procdir/$name doesn't seem to be a binary format " .
-		    "registration.";
-	    return 0;
-	}
-	unless ($cur_interpreter eq $interpreter)
-	{
-	    warning "$procdir/$name set by system administrator to " .
-		    "$cur_interpreter rather than $interpreter.";
-	    return 0;
-	}
+	# We used to check the entry in $procdir to make sure we were
+	# removing an entry with the same interpreter, but this is bad; it
+	# makes things really difficult for packages that want to change
+	# their interpreter, for instance. Now we unconditionally remove and
+	# rely on the calling logic to check that the entry in $admindir
+	# belongs to the same package.
+	# 
+	# In other words, $admindir becomes the canonical reference, not
+	# $procdir. This is in line with similar update-* tools in Debian.
 
 	if ($test)
 	{
@@ -373,7 +354,29 @@ if ($mode eq 'install')
 {
     if (-f "$admindir/$name")
     {
-	warning "$admindir/$name already exists; overriding it";
+	# For now we just silently zap any old versions with the same
+	# package name (has to be silent or upgrades are annoying). Maybe we
+	# should be more careful in the future.
+	my $oldpackage = (get_binfmt $name)[0];
+	unless ($package eq $oldpackage)
+	{
+	    $package = '<local>'	    if $package eq ':';
+	    $oldpackage = '<local>'	    if $oldpackage eq ':';
+	    quit "current package is $package, but binary format already " .
+		 "installed by $oldpackage.";
+	}
+	disable $name or quit "unable to disable binary format $name.";
+    }
+    if (-e "$procdir/$name")
+    {
+	# This is a bit tricky. If we get here, then the kernel knows about
+	# a format we don't. Either somebody has used binfmt_misc directly,
+	# or update-binfmts did something wrong. For now we do nothing;
+	# disabling and re-enabling all binary formats will fix this anyway.
+	# There may be a --force option in the future to help with problems
+	# like this.
+	quit "found manually created entry for $name in $procdir; " .
+	     "leaving it alone.";
     }
     if ($test)
     {
@@ -411,6 +414,9 @@ elsif ($mode eq 'remove')
 {
     unless (-f "$admindir/$name")
     {
+	# There may be a --force option in the future to allow entries like
+	# this to be removed; either they were created manually or
+	# update-binfmts was broken.
 	quit "$admindir/$name does not exist; nothing to do!";
     }
     my $oldpackage = (get_binfmt $name)[0];
