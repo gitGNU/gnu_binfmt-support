@@ -1,3 +1,9 @@
+binfmt-support (1.2.3) UNRELEASED; urgency=low
+
+  * Convert binfmt-support(8) to the -mdoc macro set.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 16 Jan 2004 19:38:32 +0000
+
 binfmt-support (1.2.2) unstable; urgency=low
 
   * Document the 'detector' option in format files.
