@@ -239,10 +239,11 @@ sub unload_binfmt_misc ()
 	    return 0;
 	}
     }
-    if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe -r binfmt_misc)) {
-	warning "Couldn't unload the binfmt_misc module: ", ($? >> 8);
-	return 0;
-    }
+    # We used to try to unload the kernel module as well, but it seems that
+    # it doesn't always unload properly (http://bugs.debian.org/155570) and
+    # in any case it means that strictly speaking we have to remember if the
+    # module was loaded when we started. Since it's not actually important,
+    # we now just don't bother.
     return 1;
 }
 

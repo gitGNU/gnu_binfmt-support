@@ -1,3 +1,14 @@
+binfmt-support (1.2.2) UNRELEASED; urgency=low
+
+  * Document the 'detector' option in format files.
+  * Don't bother trying to unload the binfmt_misc kernel module when
+    stopping, since (a) it means we run into a kernel bug, (b) it means we
+    have to keep track of whether the module was loaded by the administrator
+    before starting, and (c) it's unimportant anyway. Reassigns #155570 to
+    kernel.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 26 Apr 2003 14:00:34 +0100
+
 binfmt-support (1.2.1) unstable; urgency=low
 
   * Cosmetic improvements to debian/rules.
