@@ -1,10 +1,10 @@
-binfmt-support (1.2.1) UNRELEASED; urgency=low
+binfmt-support (1.2.1) unstable; urgency=low
 
   * Cosmetic improvements to debian/rules.
   * Make update-binfmts(8) render properly under groff's utf8 device: in
     particular, use '\-' rather than '-' where a real dash is needed.
 
- -- Colin Watson <cjwatson@debian.org>  Mon,  3 Feb 2003 13:12:40 +0000
+ -- Colin Watson <cjwatson@debian.org>  Mon, 24 Feb 2003 01:48:43 +0000
 
 binfmt-support (1.2.0) unstable; urgency=low
 
