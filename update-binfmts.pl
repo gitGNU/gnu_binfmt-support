@@ -278,7 +278,7 @@ sub act_enable (;$);
 sub act_enable (;$)
 {
     my $name = shift;
-    return 0 unless load_binfmt_misc;
+    return 1 unless load_binfmt_misc;
     if (defined $name) {
 	unless ($test or -e "$admindir/$name") {
 	    warning "$name not in database of installed binary formats.";
@@ -361,7 +361,7 @@ sub act_disable (;$)
 	    act_disable $_ if -f "$admindir/$_" and -e "$procdir/$_";
 	}
 	closedir ADMINDIR;
-	return 0 unless unload_binfmt_misc;
+	return 1 unless unload_binfmt_misc;
     }
     return 1;
 }

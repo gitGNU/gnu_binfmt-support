@@ -1,3 +1,9 @@
+binfmt-support (1.1.1) unstable; urgency=medium
+
+  * Return non-fatally if binfmt_misc couldn't be loaded (see #129170).
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 14 Jan 2002 13:52:32 +0000
+
 binfmt-support (1.1.0) unstable; urgency=low
 
   * Implement an --import option to allow packages to install format files
