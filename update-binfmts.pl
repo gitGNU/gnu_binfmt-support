@@ -222,20 +222,25 @@ sub load_binfmt_misc ()
 	return 1;
     }
 
-    unless (-f $register) {
+    my $style = get_binfmt_style;
+    # If the style is 'filesystem', then we must already have the module
+    # loaded, as binfmt_misc wouldn't show up in /proc/filesystems
+    # otherwise.
+    if ($style eq 'procfs' and not -d $procdir) {
 	if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe binfmt_misc)) {
 	    warning "Couldn't load the binfmt_misc module.";
 	    return 0;
 	}
-	unless (-d $procdir) {
-	    warning "binfmt_misc module seemed to load, but no $procdir",
-		    "directory! Giving up.";
-	    return 0;
-	}
     }
 
-    my $style = get_binfmt_style;
-    # TODO: Is checking for $register the right way to go here?
+    unless (-d $procdir) {
+	warning "binfmt_misc module seemed to be loaded, but no $procdir",
+		"directory! Giving up.";
+	return 0;
+    }
+
+    # Find out what the style looks like now.
+    $style = get_binfmt_style;
     if ($style eq 'filesystem' and not -f $register) {
 	if (system qw(/bin/mount -t binfmt_misc none), $procdir) {
 	    warning "Couldn't mount the binfmt_misc filesystem on $procdir.";

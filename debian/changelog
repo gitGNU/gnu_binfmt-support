@@ -1,3 +1,12 @@
+binfmt-support (1.1.4) unstable; urgency=low
+
+  * The "phone me if you want a bug fixed" release. :-)
+  * Apply more careful logic to loading and mounting binfmt_misc on newer
+    kernels (thanks, Daniel Silverstone; closes: #131236).
+  * Remove emacs local variables from this changelog.
+
+ -- Colin Watson <cjwatson@debian.org>  Sun,  3 Feb 2002 20:37:30 +0000
+
 binfmt-support (1.1.3) unstable; urgency=low
 
   * Recommend in README.Debian that packages using --import conflict with
@@ -135,7 +144,3 @@ binfmt-support (1.0) unstable; urgency=low
   * Initial Release.
 
  -- Colin Watson <cjw44@flatline.org.uk>  Tue, 16 May 2000 23:46:15 +0100
-
-Local variables:
-mode: debian-changelog
-End:
