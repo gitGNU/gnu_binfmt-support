@@ -1,3 +1,22 @@
+binfmt-support (1.1.0) unstable; urgency=low
+
+  * Implement an --import option to allow packages to install format files
+    without depending on binfmt-support. All format files will be imported
+    by binfmt-support when it's eventually installed (closes: #119694).
+  * Update lots of documentation in line with this.
+  * Install the directory /usr/share/binfmts for format files.
+  * Don't attempt to load and unload the binfmt_misc kernel module in --test
+    mode.
+
+  * Use Text::Wrap rather than my own wrap() function.
+  * General code cleanup.
+  * get_binfmt() now returns a hash, not an array.
+  * Apply better nroff style to the man page.
+  * Policy version 3.5.6.
+  * Perl policy version 1.20.
+
+ -- Colin Watson <cjwatson@debian.org>  Sun,  6 Jan 2002 13:58:51 +0000
+
 binfmt-support (1.0.6) unstable; urgency=low
 
   * Check whether modprobe is available before using it (closes: #106090).

@@ -5,31 +5,34 @@ You must have binfmt_misc either compiled into your Linux kernel or
 available as a module in order to use this package. The module will be
 automatically inserted if necessary.
 
-If you're a system administrator, update-binfmts(8) should tell you all
-you need to know about how to use update-binfmts to manage your own
-local binary formats.
+If you're a system administrator, update-binfmts(8) should tell you all you
+need to know about how to use update-binfmts to manage your own local binary
+formats.
 
-If you're a package maintainer and want to use update-binfmts, you
-should put something like the following in your postinst script (this
-example is similar to what the javawrapper package does):
+If you're a package maintainer and want to use update-binfmts, you should
+install a format file like the following (without the leading spaces) in
+/usr/share/binfmts:
 
-  if [ configure = "$1" ]; then
-    /usr/sbin/update-binfmts --package javawrapper \
-      --install javawrapper /usr/bin/javawrapper --magic '\xca\xfe\xba\xbe'
+  package javawrapper
+  interpreter /usr/bin/javawrapper
+  magic \xca\xfe\xba\xbe
+
+Assuming that this file is installed in /usr/share/binfmts/javawrapper, the
+postinst should then do this:
+
+  if [ configure = "$1" -a -x /usr/sbin/update-binfmts ]; then
+    /usr/sbin/update-binfmts --import javawrapper
   fi
 
 The prerm script should then do the reverse:
 
-  if [ remove = "$1" ]; then
+  if [ remove = "$1" -a -x /usr/sbin/update-binfmts ]; then
     /usr/sbin/update-binfmts --package javawrapper \
       --remove javawrapper /usr/bin/javawrapper
   fi
 
-If you choose not to have a hard dependency on binfmt-support (for
-instance, it won't do anything on the Hurd yet, although it should
-install without any problems), you should use a check like:
+binfmt-support currently has no effect on the Hurd, although it should
+install without any problems. Patches from Hurd experts to make translators
+look like this interface are welcome.
 
-  if [ configure = "$1" -a -x /usr/sbin/update-binfmts ]; then
-    ...
-
- -- Colin Watson <cjwatson@debian.org>  Sat, 17 Feb 2001 12:59:50 +0000
+ -- Colin Watson <cjwatson@debian.org>  Sun,  6 Jan 2002 03:07:35 +0000

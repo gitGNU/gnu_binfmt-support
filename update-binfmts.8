@@ -1,149 +1,265 @@
 .\" update-binfmts.8
-.TH UPDATE-BINFMTS 8 "17 February 2001" DEBIAN "Debian GNU"
+.TH UPDATE-BINFMTS 8 "6 January 2002" DEBIAN "Debian"
 .SH NAME
 update-binfmts \- maintain registry of executable binary formats
 .SH SYNOPSIS
 .B update-binfmts
 .RI [ options ]
-.B --install
+.B \-\-install
 .I name path spec
 .br
 .B update-binfmts
 .RI [ options ]
-.B --remove
+.B \-\-remove
 .I name path
 .br
 .B update-binfmts
 .RI [ options ]
-.B --display
+.B \-\-import
 .RI [ name ]
 .br
 .B update-binfmts
 .RI [ options ]
-.B --enable
+.B \-\-display
 .RI [ name ]
 .br
 .B update-binfmts
 .RI [ options ]
-.B --disable
+.B \-\-enable
+.RI [ name ]
+.br
+.B update-binfmts
+.RI [ options ]
+.B \-\-disable
 .RI [ name ]
 .SH DESCRIPTION
 Versions 2.1.43 and later of the Linux kernel have contained the binfmt_misc
-module. This enables a system administrator to register interpreters for
-various binary formats based on a magic number or their file extension, and
-cause the appropriate interpreter to be invoked whenever a matching file is
-executed. Think of it as a more flexible version of the #! executable
-interpreter mechanism, or as something which can behave a little like
-"associations" in certain other operating systems (though in Linux the tendency
-is to keep this sort of thing somewhere else, like your file manager).
-\fBupdate-binfmts\fP manages a persistent database of these interpreters.
+module.
+This enables a system administrator to register interpreters for various
+binary formats based on a magic number or their file extension, and cause
+the appropriate interpreter to be invoked whenever a matching file is
+executed.
+Think of it as a more flexible version of the #! executable interpreter
+mechanism, or as something which can behave a little like "associations" in
+certain other operating systems (though in GNU/Linux the tendency is to keep
+this sort of thing somewhere else, like your file manager).
+.B update-binfmts
+manages a persistent database of these interpreters.
 .PP
-When each package providing a registered interpreter is installed, changed, or
-removed, \fBupdate-binfmts\fP is called to update information about that
-interpreter. \fBupdate-binfmts\fP is usually called from the \fBpostinst\fP or
-\fBprerm\fP scripts in Debian packages.
+When each package providing a registered interpreter is installed, changed,
+or removed,
+.B update-binfmts
+is called to update information about that interpreter.
+.B update-binfmts
+is usually called from the
+.I postinst
+or
+.I prerm
+scripts in Debian packages.
 .SH OPTIONS
-Exactly one action must be specified; this may be accompanied by any one of the
-common options.
+Exactly one action must be specified; this may be accompanied by any one of
+the common options.
 .SS "COMMON OPTIONS"
 .TP
-.BI --package " package-name"
+.BI \-\-package " package-name"
 Specifies the name of the current package, to be used by package
-post-installation and pre-removal scripts. System administrators installing
-binary formats for local use should probably ignore this option.
+post-installation and pre-removal scripts.
+System administrators installing binary formats for local use should
+probably ignore this option.
+.IP
+When installing new formats, the
+.B \-\-import
+action should be used instead.
 .TP
-.BI --admindir " directory"
-Specifies the administrative directory, when this is to be different from the
-default of /var/lib/binfmts.
+.BI \-\-admindir " directory"
+Specifies the administrative directory, when this is to be different from
+the default of /var/lib/binfmts.
 .TP
-.B --test
+.BI \-\-importdir " directory"
+Specifies the directory from which packaged binary formats are imported,
+when this is to be different from the default of /usr/share/binfmts.
+.TP
+.B \-\-test
 Don't do anything, just demonstrate what would be done.
 .TP
-.B --help
+.B \-\-help
 Display some usage information.
 .TP
-.B --version
+.B \-\-version
 Display version information.
 .SS ACTIONS
 .TP
-.BI --install " name path spec"
-Install a binary format identified by \fIname\fP with interpreter \fIpath\fP
-into the database. After registration, this format will be used when the kernel
-tries to execute a file matching \fIspec\fP (see \fBBINARY FORMAT
-SPECIFICATIONS\fP below).
+.BI \-\-install " name path spec"
+Install a binary format identified by
+.I name
+with interpreter
+.I path
+into the database.
+After registration, this format will be used when the kernel tries to
+execute a file matching
+.I spec
+(see
+.B BINARY FORMAT SPECIFICATIONS
+below).
 .IP
-\fB--install\fP will attempt to enable this binary format in the kernel as well
-as adding it to its own database; see \fB--enable\fP below.
+.B \-\-install
+will attempt to enable this binary format in the kernel as well as adding it
+to its own database; see
+.B \-\-enable
+below.
 .IP
 You cannot install a format with any of the names ".", "..", "register", or
 "status", as these are used by the filesystem or the binfmt_misc module.
 .TP
-.BI --remove " name path"
-Remove the binary format identified by \fIname\fP with interpreter \fIpath\fP
-from the database. This will also attempt to disable the binary format in the
-kernel; see \fB--disable\fP below.
+.BI \-\-remove " name path"
+Remove the binary format identified by
+.I name
+with interpreter
+.I path
+from the database.
+This will also attempt to disable the binary format in the kernel; see
+.B \-\-disable
+below.
 .TP
-\fB--display\fP [\fIname\fP]
-Display any information held in the database about the binary format identifier
-\fIname\fP, or about all known binary formats if no \fIname\fP is given. Also
-show whether displayed binary formats are enabled or disabled.
+\fB\-\-import\fP [\fIname\fP]
+Import a packaged format file called
+.IR name ,
+or import all format files currently on the system if no
+.I name
+is given.
+If
+.I name
+is not a full path, it is assumed to be a file in the import directory
+(/usr/share/binfmts by default).
+See
+.B FORMAT FILES
+below for the required contents of these files.
+.IP
+For packages, this is preferable to using the
+.B \-\-install
+option, as a format file can be installed without
+.B update-binfmts
+needing to be available.
 .TP
-\fB--enable\fP [\fIname\fP]
-Enable binary format \fIname\fP, or all known binary formats if no \fIname\fP
-is given, in the kernel, thus enabling direct execution of matching files. You
-must have binfmt_misc compiled into the kernel or loaded as a module for this
-to work.
+\fB\-\-display\fP [\fIname\fP]
+Display any information held in the database about the binary format
+identifier
+.IR name ,
+or about all known binary formats if no
+.I name
+is given.
+Also show whether displayed binary formats are enabled or disabled.
 .TP
-\fB--disable\fP [\fIname\fP]
-Disable binary format \fIname\fP, or all known binary formats if no \fIname\fP
-is given, in the kernel, thus disabling direct execution of matching files. You
-must have binfmt_misc compiled into the kernel or loaded as a module for this
-to work.
+\fB\-\-enable\fP [\fIname\fP]
+Enable binary format
+.IR name ,
+or all known binary formats if no
+.I name
+is given, in the kernel, thus enabling direct execution of matching files.
+You must have binfmt_misc compiled into the kernel or loaded as a module for
+this to work.
+.TP
+\fB\-\-disable\fP [\fIname\fP]
+Disable binary format
+.IR name ,
+or all known binary formats if no
+.I name
+is given, in the kernel, thus disabling direct execution of matching files.
+You must have binfmt_misc compiled into the kernel or loaded as a module for
+this to work.
 .SS "BINARY FORMAT SPECIFICATIONS"
 .TP
-.BI --magic " byte-sequence"
-This matches all files with the magic number \fIbyte-sequence\fP. Hexadecimal
-escapes may be included in the \fIbyte-sequence\fP by preceding them with \ex,
-for example '\ex0a' for a linefeed. Remember to protect such escapes with
-quotes or an additional backslash to prevent their interpretation by the shell.
+.BI \-\-magic " byte-sequence"
+This matches all files with the magic number
+.IR byte-sequence .
+Hexadecimal escapes may be included in the
+.I byte-sequence
+by preceding them with \ex, for example '\ex0a' for a linefeed.
+Remember to protect such escapes with quotes or an additional backslash to
+prevent their interpretation by the shell.
 .IP
 Also see
-.BR --offset " and " mask .
+.BR \-\-offset " and " \-\-mask .
 .TP
-.BI --offset " offset"
+.BI \-\-offset " offset"
 This is the offset of the magic/mask in the file, counted in bytes. The default
-is 0. Only valid with \fB--magic\fP.
+is 0. Only valid with
+.BR \-\-magic .
 .TP
-.BI --mask " byte-sequence"
+.BI \-\-mask " byte-sequence"
 This mask will be logically-ANDed with the string to be checked against the
-magic number given with \fB--magic\fP. The default is all 0xff, i.e. no effect.
-Only valid with \fB--magic\fP.
+magic number given with
+.BR \-\-magic .
+The default is all 0xff, i.e. no effect.
+Only valid with
+.BR \-\-magic.
 .TP
-.BI --extension " extension"
-This matches all files whose names end in ".\fIextension\fP". Hexadecimal
-escapes are not recognized here. Extension matching is case-sensitive.
+.BI \-\-extension " extension"
+This matches all files whose names end in
+.RI \(lq. extension \(rq.
+Hexadecimal escapes are not recognized here.
+Extension matching is case-sensitive.
+.SS "FORMAT FILES"
+A format file is a sequence of options, one per line, corresponding roughly
+to the options given to an
+.B \-\-install
+command.
+Each option consists of a key, followed by whitespace, followed by a value.
+.PP
+The
+.I package
+option should be set to the current package.
+The
+.I interpreter
+option should be set to the path to the interpreter that will handle this
+binary format.
+The
+.IR magic ", " offset ", " mask ", and " extension
+options correspond to the command-line options of the same names.
 .SH EXIT STATUS
 .IP 0
 The requested action was successfully performed.
 .IP 2
 Problems were encountered whilst parsing the command line or performing the
 action.
-.SH NOTES
-If you're not careful, you can break your system with update-binfmts. An easy
-way to do this is to register an ELF binary as a handler for ELF, which will
-almost certainly cause your system to hang immediately; even if it doesn't, you
-won't be able to run update-binfmts to fix it. In the future update-binfmts may
-have some checks to prevent this sort of thing happening accidentally, though
-of course you can still manipulate the binfmt_misc kernel module directly.
-.SH AUTHOR
-Debian GNU update-binfmts is copyright (c) 2000-2001 Colin Watson
-<cjwatson@debian.org>. See the GNU General Public License version 2 or later
-for copying conditions.
+.SH EXAMPLES
+This format file can be used with an interpreter capable of handling Java
+\&.class files:
 .PP
-You can find the GNU GPL in /usr/share/common-licenses/GPL on any modern Debian
-system.
+.nf
+    package javawrapper
+    interpreter /usr/bin/javawrapper
+    magic \exca\exfe\exba\exbe
+.fi
+.PP
+This corresponds roughly to the following command:
+.PP
+.nf
+    update-binfmts --package javawrapper \e
+        --install javawrapper /usr/bin/javawrapper \e
+        --magic '\exca\exfe\exba\exbe'
+.fi
+.SH NOTES
+If you're not careful, you can break your system with update-binfmts.
+An easy way to do this is to register an ELF binary as a handler for ELF,
+which will almost certainly cause your system to hang immediately; even if
+it doesn't, you won't be able to run update-binfmts to fix it.
+In the future update-binfmts may have some checks to prevent this sort of
+thing happening accidentally, though of course you can still manipulate the
+binfmt_misc kernel module directly.
+.SH AUTHOR
+.B update-binfmts
+is copyright (c) 2000-2002 Colin Watson <cjwatson@debian.org>.
+See the GNU General Public License version 2 or later for copying
+conditions.
+.PP
+You can find the GNU GPL in /usr/share/common-licenses/GPL on any modern
+Debian system.
 .PP
 Richard Guenther wrote the binfmt_misc kernel module.
 .SH THANKS
-Ian Jackson wrote \fBupdate-alternatives\fP and \fBdpkg-divert\fP, from which
-this program borrows heavily.
+Ian Jackson wrote
+.B update-alternatives
+and
+.BR dpkg-divert ,
+from which this program borrows heavily.
