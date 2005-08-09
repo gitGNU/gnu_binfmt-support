@@ -3,7 +3,7 @@
 set -e
 
 if [ "$1" = configure ]; then
-    /usr/sbin/update-binfmts --import
+    /usr/sbin/update-binfmts --import || true
 fi
 
 if [ -e /etc/rc2.d/S20binfmt-support ]; then

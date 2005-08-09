@@ -1,3 +1,10 @@
+binfmt-support (1.2.5) UNRELEASED; urgency=low
+
+  * Stop the postinst from exiting non-zero if update-binfmts fails, for
+    example if you're running something other than Linux (closes: #322193).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue,  9 Aug 2005 19:13:28 +0100
+
 binfmt-support (1.2.4) hoary; urgency=low
 
   * Move binfmt-support to start at 90 rather than 20
