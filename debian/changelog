@@ -1,3 +1,9 @@
+binfmt-support (1.2.4) hoary; urgency=low
+
+  * Move binfmt-support to start at 90 rather than 20
+
+ -- Thom May <thom@planetarytramp.net>  Fri, 10 Dec 2004 18:19:02 +0100
+
 binfmt-support (1.2.3) unstable; urgency=low
 
   * Convert binfmt-support(8) to the -mdoc macro set.

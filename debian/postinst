@@ -6,6 +6,10 @@ if [ "$1" = configure ]; then
     /usr/sbin/update-binfmts --import
 fi
 
+if [ -e /etc/rc2.d/S20binfmt-support ]; then
+        update-rc.d -f binfmt-support remove >/dev/null 2>&1
+fi
+
 #DEBHELPER#
 
 exit 0
