@@ -1,7 +1,8 @@
 binfmt-support (1.2.5) UNRELEASED; urgency=low
 
-  * Stop the postinst from exiting non-zero if update-binfmts fails, for
-    example if you're running something other than Linux (closes: #322193).
+  * Stop the postinst/prerm from exiting non-zero if update-binfmts fails,
+    for example if you're running something other than Linux
+    (closes: #322193).
   * Policy version 3.6.2. No changes required.
 
  -- Colin Watson <cjwatson@debian.org>  Tue,  9 Aug 2005 19:13:28 +0100
