@@ -1,4 +1,4 @@
-binfmt-support (1.2.5) UNRELEASED; urgency=low
+binfmt-support (1.2.5) unstable; urgency=low
 
   [ Colin Watson ]
   * Stop the postinst/prerm from exiting non-zero if update-binfmts fails,
@@ -10,7 +10,7 @@ binfmt-support (1.2.5) UNRELEASED; urgency=low
   [ Scott James Remnant ]
   * Use lsb functions in init script.
 
- -- Colin Watson <cjwatson@debian.org>  Tue,  9 Aug 2005 19:13:28 +0100
+ -- Colin Watson <cjwatson@debian.org>  Tue, 30 Aug 2005 17:48:51 +0100
 
 binfmt-support (1.2.4) hoary; urgency=low
 
