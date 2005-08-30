@@ -5,6 +5,7 @@ binfmt-support (1.2.5) UNRELEASED; urgency=low
     for example if you're running something other than Linux
     (closes: #322193).
   * Policy version 3.6.2. No changes required.
+  * Update GPL notices with the FSF's new address.
 
   [ Scott James Remnant ]
   * Use lsb functions in init script.
