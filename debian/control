@@ -7,7 +7,7 @@ Build-Depends-Indep: debhelper (>= 4.2.12)
 
 Package: binfmt-support
 Architecture: all
-Depends: ${perl:Depends}
+Depends: ${perl:Depends}, lsb-base
 Description: Support for extra binary formats
  The binfmt_misc kernel module, contained in versions 2.1.43 and later of the
  Linux kernel, allows system administrators to register interpreters for

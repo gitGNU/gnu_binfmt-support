@@ -17,19 +17,25 @@ DESC="additional executable binary formats"
 
 test -x /usr/sbin/update-binfmts || exit 0
 
+. /lib/lsb/init-functions
+. /etc/default/rcS
+
 set -e
+CODE=0
 
 case "$1" in
   start)
-    echo -n "Enabling $DESC: "
-    update-binfmts --enable
-    echo "$NAME."
+    log_begin_msg "Enabling $DESC..."
+    update-binfmts --enable || CODE=$?
+    log_end_msg $CODE
+    exit $CODE
     ;;
 
   stop)
-    echo -n "Disabling $DESC: "
-    update-binfmts --disable
-    echo "$NAME."
+    log_begin_msg "Disabling $DESC..."
+    update-binfmts --disable || CODE=$?
+    log_end_msg $CODE
+    exit $CODE
     ;;
 
   restart|force-reload)
