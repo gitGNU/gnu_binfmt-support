@@ -1,9 +1,9 @@
-binfmt-support (1.2.6) UNRELEASED; urgency=low
+binfmt-support (1.2.6) unstable; urgency=low
 
   * Mount binfmt_misc filesystem as 'binfmt_misc' rather than 'none'
     (thanks, Roucaries Bastien; closes: #328827).
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 17 Sep 2005 17:16:26 +0100
+ -- Colin Watson <cjwatson@debian.org>  Sat, 17 Sep 2005 17:18:38 +0100
 
 binfmt-support (1.2.5) unstable; urgency=low
 
