@@ -3,6 +3,8 @@ binfmt-support (1.2.7) UNRELEASED; urgency=low
   * Remove outdated skeleton comments in init script, since there's very
     little of the skeleton left.
   * Add LSB info to init script.
+  * Use log_daemon_msg from lsb-base (>= 3.0-6) for more policy-compliant
+    init script output.
 
  -- Colin Watson <cjwatson@debian.org>  Thu, 27 Oct 2005 12:56:33 +0100
 

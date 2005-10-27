@@ -24,14 +24,14 @@ CODE=0
 
 case "$1" in
   start)
-    log_begin_msg "Enabling $DESC..."
+    log_daemon_msg "Enabling $DESC" "$NAME"
     update-binfmts --enable || CODE=$?
     log_end_msg $CODE
     exit $CODE
     ;;
 
   stop)
-    log_begin_msg "Disabling $DESC..."
+    log_daemon_msg "Disabling $DESC" "$NAME"
     update-binfmts --disable || CODE=$?
     log_end_msg $CODE
     exit $CODE
