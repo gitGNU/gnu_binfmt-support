@@ -1,3 +1,10 @@
+binfmt-support (1.2.7) UNRELEASED; urgency=low
+
+  * Remove outdated skeleton comments in init script, since there's very
+    little of the skeleton left.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 27 Oct 2005 12:56:33 +0100
+
 binfmt-support (1.2.6) unstable; urgency=low
 
   * Mount binfmt_misc filesystem as 'binfmt_misc' rather than 'none'
