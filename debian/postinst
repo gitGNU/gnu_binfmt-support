@@ -7,7 +7,7 @@ if [ "$1" = configure ]; then
 fi
 
 if [ -e /etc/rc2.d/S20binfmt-support ]; then
-        update-rc.d -f binfmt-support remove >/dev/null 2>&1
+    update-rc.d -f binfmt-support remove >/dev/null 2>&1
 fi
 
 if [ -e /etc/rc0.d/K90binfmt-support ]; then
