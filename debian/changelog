@@ -1,3 +1,10 @@
+binfmt-support (1.2.8) UNRELEASED; urgency=low
+
+  * Disabling binfmt-support on system shutdown is rather pointless, so stop
+    doing it.
+
+ -- Colin Watson <cjwatson@debian.org>  Sun,  5 Mar 2006 19:25:07 +0000
+
 binfmt-support (1.2.7) unstable; urgency=low
 
   * Remove outdated skeleton comments in init script, since there's very
