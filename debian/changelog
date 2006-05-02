@@ -1,4 +1,4 @@
-binfmt-support (1.2.8) UNRELEASED; urgency=low
+binfmt-support (1.2.8) unstable; urgency=low
 
   * Disabling binfmt-support on system shutdown is rather pointless, so stop
     doing it.
@@ -6,7 +6,7 @@ binfmt-support (1.2.8) UNRELEASED; urgency=low
     target).
   * Use debhelper v4.
 
- -- Colin Watson <cjwatson@debian.org>  Sun,  5 Mar 2006 19:25:07 +0000
+ -- Colin Watson <cjwatson@debian.org>  Tue,  2 May 2006 23:27:09 +0100
 
 binfmt-support (1.2.7) unstable; urgency=low
 
