@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Colin Watson <cjwatson@debian.org>
 Standards-Version: 3.6.2
-Build-Depends-Indep: debhelper (>= 4.2.12)
+Build-Depends: debhelper (>= 4.2.12)
 
 Package: binfmt-support
 Architecture: all
