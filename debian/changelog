@@ -2,6 +2,8 @@ binfmt-support (1.2.9) UNRELEASED; urgency=low
 
   * Mount /proc/sys/fs/binfmt_misc nodev, noexec, and nosuid, to guard
     against possible future kernel security vulnerabilities.
+  * Suppress warning on --test --import if the given format file has no
+    detector line (closes: #383287).
 
  -- Colin Watson <cjwatson@debian.org>  Thu, 20 Jul 2006 14:18:55 +0100
 
