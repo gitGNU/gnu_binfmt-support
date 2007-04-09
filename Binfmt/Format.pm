@@ -135,7 +135,7 @@ sub dump_stdout ($)
     my $self = shift;
     for my $field (@fields, @optional_fields) {
 	printf "%12s = %s\n", $field,
-	    (defined $self->{$field}) ? $self->{$field} : '');
+	    (defined $self->{$field}) ? $self->{$field} : '';
     }
 }
 

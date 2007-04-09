@@ -1,3 +1,10 @@
+binfmt-support (1.2.10) UNRELEASED; urgency=low
+
+  * Fix brown-paper-bag syntax error in Binfmt::Format (thanks, Bastian
+    Kleineidam; closes: #418343).
+
+ -- Colin Watson <cjwatson@debian.org>  Mon,  9 Apr 2007 18:45:18 +0100
+
 binfmt-support (1.2.9) unstable; urgency=low
 
   * Mount /proc/sys/fs/binfmt_misc nodev, noexec, and nosuid, to guard
