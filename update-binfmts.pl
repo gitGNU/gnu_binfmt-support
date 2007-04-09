@@ -202,7 +202,8 @@ sub load_binfmt_misc ()
     # Find out what the style looks like now.
     $style = get_binfmt_style;
     if ($style eq 'filesystem' and not -f $register) {
-	if (system qw(/bin/mount -t binfmt_misc -o nodev,noexec,nosuid binfmt_misc), $procdir) {
+	if (system ('/bin/mount', '-t', 'binfmt_misc',
+		    '-o', 'nodev,noexec,nosuid', 'binfmt_misc', $procdir)) {
 	    warning "Couldn't mount the binfmt_misc filesystem on $procdir.";
 	    return 0;
 	}

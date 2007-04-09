@@ -2,6 +2,7 @@ binfmt-support (1.2.10) UNRELEASED; urgency=low
 
   * Fix brown-paper-bag syntax error in Binfmt::Format (thanks, Bastian
     Kleineidam; closes: #418343).
+  * Suppress perl warning about commas within qw().
 
  -- Colin Watson <cjwatson@debian.org>  Mon,  9 Apr 2007 18:45:18 +0100
 
