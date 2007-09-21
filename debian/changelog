@@ -1,3 +1,9 @@
+binfmt-support (1.2.11) UNRELEASED; urgency=low
+
+  * Recommend POSIX-compliant shell fragments in README.Debian.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 21 Sep 2007 17:26:16 +0100
+
 binfmt-support (1.2.10) unstable; urgency=low
 
   * Fix brown-paper-bag syntax error in Binfmt::Format (thanks, Bastian
