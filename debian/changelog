@@ -1,6 +1,7 @@
 binfmt-support (1.2.11) UNRELEASED; urgency=low
 
   * Recommend POSIX-compliant shell fragments in README.Debian.
+  * Remove stray 'closedir ADMINDIR' in act_display (closes: #482482).
 
  -- Colin Watson <cjwatson@debian.org>  Fri, 21 Sep 2007 17:26:16 +0100
 

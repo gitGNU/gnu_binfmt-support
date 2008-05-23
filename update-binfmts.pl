@@ -562,7 +562,6 @@ EOF
 	for my $id (keys %formats) {
 	    act_display $id;
 	}
-	closedir ADMINDIR;
     }
     return 1;
 }
