@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Colin Watson <cjwatson@debian.org>
 Standards-Version: 3.6.2
 Build-Depends: debhelper (>= 4.2.12)
+Vcs-Bzr: http://bzr.debian.org/binfmt-support/trunk
 
 Package: binfmt-support
 Architecture: all

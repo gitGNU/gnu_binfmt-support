@@ -1,3 +1,9 @@
+binfmt-support (1.2.12) UNRELEASED; urgency=low
+
+  * Moved to bzr.debian.org; add Vcs-Bzr control field.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 19 Aug 2008 10:29:13 +0100
+
 binfmt-support (1.2.11) unstable; urgency=low
 
   * Recommend POSIX-compliant shell fragments in README.Debian.
