@@ -1,11 +1,11 @@
-binfmt-support (1.2.12) UNRELEASED; urgency=low
+binfmt-support (1.2.12) unstable; urgency=low
 
   * Moved to bzr.debian.org; add Vcs-Bzr control field.
   * Some packages (hi, mono) occasionally seem to try to remove formats that
     weren't installed and thus don't have an entry in the administration
     directory. Make this non-fatal, since the state is already as requested.
 
- -- Colin Watson <cjwatson@debian.org>  Tue, 19 Aug 2008 10:29:13 +0100
+ -- Colin Watson <cjwatson@debian.org>  Tue, 26 May 2009 10:13:28 +0100
 
 binfmt-support (1.2.11) unstable; urgency=low
 
