@@ -442,7 +442,7 @@ sub act_remove ($$)
 	# this to be removed; either they were created manually or
 	# update-binfmts was broken.
 	warning "$admindir/$name does not exist; nothing to do!";
-	return 0;
+	return 1;
     }
     my $old_package = $formats{$name}{package};
     unless ($package eq $old_package) {
