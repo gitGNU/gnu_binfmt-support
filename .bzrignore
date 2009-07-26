@@ -1,0 +1,4 @@
+debian/*.debhelper*
+debian/*.substvars
+debian/binfmt-support
+debian/files
