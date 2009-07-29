@@ -17,7 +17,7 @@ DESC="additional executable binary formats"
 test -x /usr/sbin/update-binfmts || exit 0
 
 . /lib/lsb/init-functions
-. /etc/default/rcS
+[ -r /etc/default/rcS ] && . /etc/default/rcS
 
 set -e
 CODE=0
