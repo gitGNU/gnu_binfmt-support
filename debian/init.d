@@ -14,7 +14,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 NAME=binfmt-support
 DESC="additional executable binary formats"
 
-test -x /usr/sbin/update-binfmts || exit 0
+which update-binfmts >/dev/null 2>&1 || exit 0
 
 . /lib/lsb/init-functions
 [ -r /etc/default/rcS ] && . /etc/default/rcS

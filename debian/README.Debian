@@ -20,14 +20,14 @@ install a format file like the following (without the leading spaces) in
 Assuming that this file is installed in /usr/share/binfmts/javawrapper, the
 postinst should then do this:
 
-  if [ "$1" = configure ] && [ -x /usr/sbin/update-binfmts ]; then
-    /usr/sbin/update-binfmts --import javawrapper
+  if [ "$1" = configure ] && which update-binfmts >/dev/null 2>&1; then
+    update-binfmts --import javawrapper
   fi
 
 The prerm script should then do the reverse:
 
-  if [ "$1" = remove ] && [ -x /usr/sbin/update-binfmts ]; then
-    /usr/sbin/update-binfmts --package javawrapper \
+  if [ "$1" = remove ] && which update-binfmts >/dev/null 2>&1; then
+    update-binfmts --package javawrapper \
       --remove javawrapper /usr/bin/javawrapper
   fi
 
