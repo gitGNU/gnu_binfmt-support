@@ -4,6 +4,7 @@
 # Required-Start:    $local_fs $remote_fs
 # Required-Stop:     $local_fs $remote_fs
 # Default-Start:     2 3 4 5
+# Default-Stop:
 # Short-Description: Support for extra binary formats
 # Description:       Enable support for extra binary formats using the Linux
 #                    kernel's binfmt_misc facility.
