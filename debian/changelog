@@ -3,6 +3,7 @@ binfmt-support (1.2.13) UNRELEASED; urgency=low
   * Upgrade to debhelper 7. Uses override targets, so requires 7.0.50.
   * Check that /etc/default/rcS exists before sourcing it.
   * Stop hardcoding path to update-binfmts.
+  * Remove Default-Stop from init script; cf. changelog entry for 1.2.8.
 
  -- Colin Watson <cjwatson@debian.org>  Wed, 29 Jul 2009 11:54:07 +0100
 
