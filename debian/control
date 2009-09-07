@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Colin Watson <cjwatson@debian.org>
 Standards-Version: 3.6.2
-Build-Depends: debhelper (>= 7.0.50)
+Build-Depends: debhelper (>= 7.0.50~)
 Vcs-Bzr: http://bzr.debian.org/binfmt-support/trunk
 
 Package: binfmt-support
