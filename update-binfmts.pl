@@ -257,6 +257,7 @@ sub act_enable (;$)
     my $name = shift;
     return 1 unless load_binfmt_misc;
     if (defined $name) {
+	return 1 if (-e "$procdir/$name");
 	unless ($test or exists $formats{$name}) {
 	    warning "$name not in database of installed binary formats.";
 	    return 0;
@@ -305,9 +306,7 @@ sub act_enable (;$)
     } else {
 	my $worked = 1;
 	for my $id (keys %formats) {
-	    unless (-e "$procdir/$id") {
-		$worked &= act_enable $id;
-	    }
+	    $worked &= act_enable $id;
 	}
 	return $worked;
     }
