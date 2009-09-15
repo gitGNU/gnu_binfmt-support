@@ -30,7 +30,7 @@ case "$1" in
     [ -z "$fmts" ] && exit 0
     log_daemon_msg "Enabling $DESC" "$NAME"
     PROCDIR=/proc/sys/fs/binfmt_misc
-    if [ ! -e "$PROCDIR/register" ] ; then
+    if [ ! -e "$PROCDIR/register" ]; then
 	modprobe -q binfmt_misc
 	mount -t binfmt_misc -o nodev,noexec,nosuid binfmt_misc "$PROCDIR"
     fi
