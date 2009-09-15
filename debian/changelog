@@ -1,11 +1,11 @@
-binfmt-support (1.2.14) UNRELEASED; urgency=low
+binfmt-support (1.2.14) unstable; urgency=low
 
   [ Tormod Volden ]
   * Maintain a cache of binary format registration instructions, and use
     them from shell at boot time if possible to avoid the Perl slow path
     (LP: #320822).
 
- -- Colin Watson <cjwatson@debian.org>  Tue, 15 Sep 2009 12:45:42 +0100
+ -- Colin Watson <cjwatson@debian.org>  Tue, 15 Sep 2009 12:48:37 +0100
 
 binfmt-support (1.2.13) unstable; urgency=low
 
