@@ -38,8 +38,7 @@ case "$1" in
     for fmt in $fmts; do
 	[ -e "$PROCDIR/$fmt" ] && continue
 	if [ ! -e "$CACHEDIR/$fmt" ] ||
-	   ! echo $(cat "$CACHEDIR/$fmt") > $PROCDIR/register
-	then
+	   ! cat "$CACHEDIR/$fmt" > $PROCDIR/register; then
 	    cachefail=1
 	fi
 	CODE=$?
