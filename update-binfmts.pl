@@ -78,6 +78,8 @@ Options:
                                 as administration directory
     --importdir <directory>     use <directory> instead of /usr/share/binfmts
                                 as import directory
+    --cachedir <directory>      use <directory> instead of /var/cache/binfmts
+                                as cache directory
     --test                      don't do anything, just demonstrate
     --help                      print this help screen and exit
     --version                   output version and exit
