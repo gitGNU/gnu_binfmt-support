@@ -707,8 +707,6 @@ for my $name (readdir ADMINDIR) {
 }
 closedir ADMINDIR;
 
-mkdir $cachedir unless -d $cachedir;
-
 my %actions = (
     'install'	=> [\&act_install, $binfmt],
     'remove'	=> [\&act_remove, $package],
