@@ -475,7 +475,7 @@ sub act_remove ($$)
 	    return 0;
 	}
 	delete $formats{$name};
-	unlink "$cachedir/$name" if -e "$cachedir/$name";
+	unlink "$cachedir/$name";
     }
     return 1;
 }
