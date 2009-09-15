@@ -24,25 +24,27 @@ CODE=0
 
 case "$1" in
   start)
-    fmts=$(cd /var/lib/binfmts; ls) || exit 0
+    ADMINDIR=/var/lib/binfmts
+    CACHEDIR=/var/cache/binfmts
+    fmts="$(cd "$ADMINDIR"; ls)" || exit 0
     [ -z "$fmts" ] && exit 0
     log_daemon_msg "Enabling $DESC" "$NAME"
     PROCDIR=/proc/sys/fs/binfmt_misc
-    if [ ! -e $PROCDIR/register ] ; then
+    if [ ! -e "$PROCDIR/register" ] ; then
 	modprobe -b -q binfmt_misc
-	mount -t binfmt_misc -o nodev,noexec,nosuid binfmt_misc $PROCDIR
+	mount -t binfmt_misc -o nodev,noexec,nosuid binfmt_misc "$PROCDIR"
     fi
     cachefail=0
     for fmt in $fmts; do
-	[ -e $PROCDIR/$fmt ] && continue
-	if [ ! -e /var/cache/binfmts/$fmt ] ||
-	    ! echo $(cat /var/cache/binfmts/$fmt) > $PROCDIR/register
+	[ -e "$PROCDIR/$fmt" ] && continue
+	if [ ! -e "$CACHEDIR/$fmt" ] ||
+	   ! echo $(cat "$CACHEDIR/$fmt") > $PROCDIR/register
 	then
 	    cachefail=1
 	fi
-        CODE=$?
+	CODE=$?
     done
-    if [ $cachefail = 1 ]; then
+    if [ "$cachefail" = 1 ]; then
 	update-binfmts --enable || CODE=$?
     fi
     log_end_msg $CODE
