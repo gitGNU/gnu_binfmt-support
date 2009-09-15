@@ -21,7 +21,7 @@ use strict;
 
 use POSIX qw(uname);
 use Text::Wrap;
-use Binfmt::Lib qw($admindir $importdir $procdir $auxdir quit warning);
+use Binfmt::Lib qw($admindir $importdir $procdir $auxdir $cachedir quit warning);
 use Binfmt::Format;
 
 my $VERSION = '@VERSION@';
@@ -78,6 +78,8 @@ Options:
                                 as administration directory
     --importdir <directory>     use <directory> instead of /usr/share/binfmts
                                 as import directory
+    --cachedir <directory>      use <directory> instead of /var/cache/binfmts
+                                as cache directory
     --test                      don't do anything, just demonstrate
     --help                      print this help screen and exit
     --version                   output version and exit
@@ -187,7 +189,8 @@ sub load_binfmt_misc ()
     # loaded, as binfmt_misc wouldn't show up in /proc/filesystems
     # otherwise.
     if ($style eq 'procfs' and not -f $register) {
-	if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe binfmt_misc)) {
+	if (not -x '/sbin/modprobe' or
+	    system qw(/sbin/modprobe -q binfmt_misc)) {
 	    warning "Couldn't load the binfmt_misc module.";
 	    return 0;
 	}
@@ -255,8 +258,10 @@ sub act_enable (;$);
 sub act_enable (;$)
 {
     my $name = shift;
-    return 1 unless load_binfmt_misc;
     if (defined $name) {
+	my $cacheonly = 0;
+	$cacheonly = 1 unless load_binfmt_misc;
+	$cacheonly = 1 if -e "$procdir/$name";
 	unless ($test or exists $formats{$name}) {
 	    warning "$name not in database of installed binary formats.";
 	    return 0;
@@ -290,24 +295,31 @@ sub act_enable (;$)
 	    print "enable $name with the following format string:\n",
 		  " $regstring";
 	} else {
-	    local *REGISTER;
-	    unless (open REGISTER, ">$register") {
-		warning "unable to open $register for writing: $!";
-		return 0;
+	    local *CACHE;
+	    if (open CACHE, ">$cachedir/$name") {
+	        print CACHE $regstring;
+		close CACHE or warning "unable to close $cachedir/$name: $!";
+	    } else {
+		warning "unable to open $cachedir/$name for writing: $!";
 	    }
-	    print REGISTER $regstring;
-	    unless (close REGISTER) {
-		warning "unable to close $register: $!";
-		return 0;
+	    unless ($cacheonly) {
+	        local *REGISTER;
+	        unless (open REGISTER, ">$register") {
+		    warning "unable to open $register for writing: $!";
+		    return 0;
+	        }
+	        print REGISTER $regstring;
+	        unless (close REGISTER) {
+	 	    warning "unable to close $register: $!";
+		    return 0;
+	        }
 	    }
 	}
 	return 1;
     } else {
 	my $worked = 1;
 	for my $id (keys %formats) {
-	    unless (-e "$procdir/$id") {
-		$worked &= act_enable $id;
-	    }
+	    $worked &= act_enable $id;
 	}
 	return $worked;
     }
@@ -465,6 +477,7 @@ sub act_remove ($$)
 	    return 0;
 	}
 	delete $formats{$name};
+	unlink "$cachedir/$name";
     }
     return 1;
 }
@@ -587,6 +600,7 @@ my %unique_options = (
 my %arguments = (
     'admindir'	=> ['path' => \$admindir],
     'importdir'	=> ['path' => \$importdir],
+    'cachedir'	=> ['path' => \$cachedir],
     'install'	=> ['name' => \$name, 'path' => \$spec{interpreter}],
     'remove'	=> ['name' => \$name, 'path' => \$spec{interpreter}],
     'package'	=> ['package-name' => \$package],

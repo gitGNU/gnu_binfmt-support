@@ -20,18 +20,19 @@ package Binfmt::Lib;
 # binfmt-support on this package, it may be broken at any time.
 
 use strict;
-use vars qw(@ISA @EXPORT_OK $admindir $importdir $procdir $auxdir);
+use vars qw(@ISA @EXPORT_OK $admindir $importdir $procdir $auxdir $cachedir);
 
 use Text::Wrap;
 
 use Exporter ();
 @ISA = qw(Exporter);
-@EXPORT_OK = qw($admindir $importdir $procdir $auxdir quit warning);
+@EXPORT_OK = qw($admindir $importdir $procdir $auxdir $cachedir quit warning);
 
 $admindir  = '/var/lib/binfmts';
 $importdir = '/usr/share/binfmts';
 $procdir   = '/proc/sys/fs/binfmt_misc';
 $auxdir    = '/usr/share/binfmt-support';
+$cachedir  = '/var/cache/binfmts';
 
 sub quit ($;@)
 {
