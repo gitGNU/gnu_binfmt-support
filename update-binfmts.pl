@@ -259,7 +259,7 @@ sub act_enable (;$)
     if (defined $name) {
 	my $cacheonly = 0;
 	$cacheonly = 1 unless load_binfmt_misc;
-	$cacheonly = 1 if (-e "$procdir/$name");
+	$cacheonly = 1 if -e "$procdir/$name";
 	unless ($test or exists $formats{$name}) {
 	    warning "$name not in database of installed binary formats.";
 	    return 0;
@@ -296,7 +296,7 @@ sub act_enable (;$)
 	    local *CACHE;
 	    if (open CACHE, ">$cachedir/$name") {
 	        print CACHE $regstring;
-		warning "unable to close $cachedir/$name: $!" unless (close CACHE);
+		close CACHE or warning "unable to close $cachedir/$name: $!";
 	    } else {
 		warning "unable to open $cachedir/$name for writing: $!";
 	    }
