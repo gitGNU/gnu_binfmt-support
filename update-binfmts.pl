@@ -187,7 +187,8 @@ sub load_binfmt_misc ()
     # loaded, as binfmt_misc wouldn't show up in /proc/filesystems
     # otherwise.
     if ($style eq 'procfs' and not -f $register) {
-	if (not -x '/sbin/modprobe' or system qw(/sbin/modprobe binfmt_misc)) {
+	if (not -x '/sbin/modprobe' or
+	    system qw(/sbin/modprobe -q binfmt_misc)) {
 	    warning "Couldn't load the binfmt_misc module.";
 	    return 0;
 	}
