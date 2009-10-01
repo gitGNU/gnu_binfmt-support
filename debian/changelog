@@ -1,3 +1,10 @@
+binfmt-support (1.2.15) UNRELEASED; urgency=low
+
+  * Ignore modprobe failures in init script (thanks, Philipp Weis; closes:
+    #549113).
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 01 Oct 2009 19:15:46 +0100
+
 binfmt-support (1.2.14) unstable; urgency=low
 
   [ Tormod Volden ]
