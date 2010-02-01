@@ -31,7 +31,9 @@ case "$1" in
     log_daemon_msg "Enabling $DESC" "$NAME"
     PROCDIR=/proc/sys/fs/binfmt_misc
     if [ ! -e "$PROCDIR/register" ]; then
-	modprobe -q binfmt_misc || true
+	if which modprobe >/dev/null 2>&1; then
+	    modprobe -q binfmt_misc || true
+	fi
 	mount -t binfmt_misc -o nodev,noexec,nosuid binfmt_misc "$PROCDIR"
     fi
     cachefail=0
