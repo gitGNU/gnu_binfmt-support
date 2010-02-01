@@ -1,9 +1,9 @@
-binfmt-support (1.2.16) UNRELEASED; urgency=low
+binfmt-support (1.2.16) unstable; urgency=low
 
   * Check whether modprobe is available before using it, this time in the
     init script too (closes: #567979).
 
- -- Colin Watson <cjwatson@debian.org>  Mon, 01 Feb 2010 17:39:05 +0000
+ -- Colin Watson <cjwatson@debian.org>  Mon, 01 Feb 2010 17:40:51 +0000
 
 binfmt-support (1.2.15) unstable; urgency=low
 
