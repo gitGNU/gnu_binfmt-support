@@ -211,6 +211,9 @@ This may be used when the binary format is more complex than can be handled
 by the kernel's format specifications alone.
 The program should return an exit code of zero if the file is appropriate
 and non-zero otherwise.
+.It Fl Fl credentials Cm yes , Fl Fl credentials Cm no
+Whether to keep the credentials of the original binary to run the interpreter;
+this is typically useful to run setuid binaries, but has security implications.
 .El
 .Ss FORMAT FILES
 A format file is a sequence of options, one per line, corresponding roughly
@@ -231,8 +234,9 @@ The
 .Ar offset ,
 .Ar mask ,
 .Ar extension ,
+.Ar detector ,
 and
-.Ar detector
+.Ar credentials
 options correspond to the command-line options of the same names.
 .Sh EXIT STATUS
 .Bl -tag -width 4n

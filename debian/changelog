@@ -1,3 +1,11 @@
+binfmt-support (1.2.16ubuntu1) UNRELEASED; urgency=low
+
+  * Add a new optional field "credentials" which when set to "yes" corresponds
+    to the binfmt-misc "C" flag; this allows running setuid root binaries with
+    the interpreter; LP: #519228.
+
+ -- Loïc Minier <loic.minier@ubuntu.com>  Tue, 09 Feb 2010 11:51:13 +0100
+
 binfmt-support (1.2.16) unstable; urgency=low
 
   * Check whether modprobe is available before using it, this time in the
