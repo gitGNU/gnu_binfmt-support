@@ -25,7 +25,7 @@ use Errno qw(ENOENT);
 use Binfmt::Lib qw(quit warning);
 
 my @fields = qw(package type offset magic mask interpreter);
-my @optional_fields = qw(detector);
+my @optional_fields = qw(detector credentials);
 
 sub load ($$$)
 {

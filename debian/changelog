@@ -1,7 +1,13 @@
 binfmt-support (1.2.17) UNRELEASED; urgency=low
 
+  [ Colin Watson ]
   * Exit cleanly on non-Linux systems, rather than causing inconvenient
     knock-on errors (closes: #565109).
+
+  [ Loïc Minier ]
+  * Add a new optional field "credentials" which when set to "yes"
+    corresponds to the binfmt-misc "C" flag; this allows running setuid root
+    binaries with the interpreter; LP: #519228.
 
  -- Colin Watson <cjwatson@debian.org>  Wed, 17 Feb 2010 14:01:24 +0000
 

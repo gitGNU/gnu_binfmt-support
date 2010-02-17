@@ -289,8 +289,11 @@ sub act_enable (;$)
 	my $interpreter = $need_detector ? $run_detectors
 					 : $binfmt->{interpreter};
 
+	my $flags = (defined $binfmt->{credentials} and
+		     $binfmt->{credentials} eq 'yes') ? 'C' : '';
+
 	my $regstring = ":$name:$type:$binfmt->{offset}:$binfmt->{magic}" .
-			":$binfmt->{mask}:$interpreter:\n";
+			":$binfmt->{mask}:$interpreter:$flags\n";
 	if ($test) {
 	    print "enable $name with the following format string:\n",
 		  " $regstring";
