@@ -14,6 +14,10 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 NAME=binfmt-support
 DESC="additional executable binary formats"
 
+if [ "$(uname)" != Linux ]; then
+  exit 0
+fi
+
 which update-binfmts >/dev/null 2>&1 || exit 0
 
 . /lib/lsb/init-functions

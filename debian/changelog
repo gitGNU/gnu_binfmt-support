@@ -1,3 +1,10 @@
+binfmt-support (1.2.17) UNRELEASED; urgency=low
+
+  * Exit cleanly on non-Linux systems, rather than causing inconvenient
+    knock-on errors (closes: #565109).
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 17 Feb 2010 14:01:24 +0000
+
 binfmt-support (1.2.16) unstable; urgency=low
 
   * Check whether modprobe is available before using it, this time in the

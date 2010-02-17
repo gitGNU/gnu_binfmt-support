@@ -109,7 +109,7 @@ EOF
 Patches for Hurd support are welcomed; they should not be difficult.
 EOF
     }
-    exit 2;
+    exit 0;
 }
 
 # Make sure options are unambiguous.
