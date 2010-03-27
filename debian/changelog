@@ -1,10 +1,10 @@
-binfmt-support (1.2.18) UNRELEASED; urgency=low
+binfmt-support (1.2.18) unstable; urgency=low
 
   * Convert to source format 3.0 (native).
   * Only warn about corrupted files in /var/lib/binfmts/ when we can't
     continue without their contents (LP: #547052).
 
- -- Colin Watson <cjwatson@debian.org>  Sat, 27 Mar 2010 13:24:23 +0000
+ -- Colin Watson <cjwatson@debian.org>  Sat, 27 Mar 2010 15:30:40 +0000
 
 binfmt-support (1.2.17) unstable; urgency=low
 
