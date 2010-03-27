@@ -27,18 +27,24 @@ use Binfmt::Lib qw(quit warning);
 my @fields = qw(package type offset magic mask interpreter);
 my @optional_fields = qw(detector credentials);
 
-sub load ($$$)
+sub load ($$$;$)
 {
     my $class = shift;
     my $name = shift;
     my $filename = shift;
+    my $quiet = shift;
     my $self = {name => $name};
     local *BINFMT;
     open BINFMT, "< $filename" or quit "unable to open $filename: $!";
     for my $field (@fields) {
 	$self->{$field} = <BINFMT>;
-	quit "$filename corrupt: out of binfmt data reading $field"
-	    unless defined $self->{$field};
+	unless (defined $self->{$field}) {
+	    if ($quiet) {
+		return;
+	    } else {
+		quit "$filename corrupt: out of binfmt data reading $field";
+	    }
+	}
     }
     for my $field (@optional_fields) {
 	$self->{$field} = <BINFMT>;

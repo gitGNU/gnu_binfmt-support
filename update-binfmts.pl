@@ -251,6 +251,30 @@ sub unload_binfmt_misc ()
     return 1;
 }
 
+# Reading the administrative directory.
+sub load_format ($;$)
+{
+    my $name = shift;
+    my $quiet = shift;
+    if (-f "$admindir/$name") {
+	my $format = Binfmt::Format->load ($name, "$admindir/$name", $quiet);
+	$formats{$name} = $format if defined $format;
+    }
+}
+
+sub load_all_formats (;$)
+{
+    my $quiet = shift;
+    local *ADMINDIR;
+    unless (opendir ADMINDIR, $admindir) {
+	quit "unable to open $admindir: $!";
+    }
+    for my $name (readdir ADMINDIR) {
+	load_format $name, $quiet;
+    }
+    closedir ADMINDIR;
+}
+
 # Actions.
 
 # Enable a binary format in the kernel.
@@ -262,6 +286,7 @@ sub act_enable (;$)
 	my $cacheonly = 0;
 	$cacheonly = 1 unless load_binfmt_misc;
 	$cacheonly = 1 if -e "$procdir/$name";
+	load_format $name;
 	unless ($test or exists $formats{$name}) {
 	    warning "$name not in database of installed binary formats.";
 	    return 0;
@@ -277,6 +302,7 @@ sub act_enable (;$)
 	    # /bin/true. Don't actually set $binfmt->{detector} though,
 	    # since run-detectors optimizes the case of empty detectors and
 	    # "runs" them last.
+	    load_all_formats 'quiet';
 	    for my $id (keys %formats) {
 		next if $id eq $name;
 		if ($binfmt->equals ($formats{$id})) {
@@ -321,6 +347,7 @@ sub act_enable (;$)
 	return 1;
     } else {
 	my $worked = 1;
+	load_all_formats;
 	for my $id (keys %formats) {
 	    $worked &= act_enable $id;
 	}
@@ -376,6 +403,7 @@ sub act_disable (;$)
     else
     {
 	my $worked = 1;
+	load_all_formats;
 	for my $id (keys %formats) {
 	    if (-e "$procdir/$id") {
 		$worked &= act_disable $id;
@@ -392,6 +420,7 @@ sub act_install ($$)
 {
     my $name = shift;
     my $binfmt = shift;
+    load_format $name, 'quiet';
     if (exists $formats{$name}) {
 	# For now we just silently zap any old versions with the same
 	# package name (has to be silent or upgrades are annoying). Maybe we
@@ -405,6 +434,10 @@ sub act_install ($$)
 		    "installed by $old_package";
 	    return 0;
 	}
+    }
+    # Separate test just in case the administrative file exists but is
+    # corrupt.
+    if (-f "$admindir/$name") {
 	unless (act_disable $name) {
 	    warning "unable to disable binary format $name";
 	    return 0;
@@ -452,21 +485,24 @@ sub act_remove ($$)
 {
     my $name = shift;
     my $package = shift;
-    unless (exists $formats{$name}) {
+    unless (-f "$admindir/$name") {
 	# There may be a --force option in the future to allow entries like
 	# this to be removed; either they were created manually or
 	# update-binfmts was broken.
 	warning "$admindir/$name does not exist; nothing to do!";
 	return 1;
     }
-    my $old_package = $formats{$name}{package};
-    unless ($package eq $old_package) {
-	$package     = '<local>' if $package eq ':';
-	$old_package = '<local>' if $old_package eq ':';
-	warning "current package is $package, but binary format already",
-		"installed by $old_package; not removing.";
-	# I don't think this should be fatal.
-	return 1;
+    load_format $name, 'quiet';
+    if (exists $formats{$name}) {
+	my $old_package = $formats{$name}{package};
+	unless ($package eq $old_package) {
+	    $package     = '<local>' if $package eq ':';
+	    $old_package = '<local>' if $old_package eq ':';
+	    warning "current package is $package, but binary format already",
+		    "installed by $old_package; not removing.";
+	    # I don't think this should be fatal.
+	    return 1;
+	}
     }
     unless (act_disable $name) {
 	warning "unable to disable binary format $name";
@@ -511,6 +547,7 @@ sub act_import (;$)
 	    return 0;
 	}
 
+	load_format $id, 'quiet';
 	if (exists $formats{$id}) {
 	    if ($formats{$id}{package} eq ':') {
 		# Installed version was installed manually, so don't import
@@ -562,6 +599,7 @@ sub act_display (;$)
     if (defined $name) {
 	print "$name (", (-e "$procdir/$name" ? 'enabled' : 'disabled'),
 	      "):\n";
+	load_format $name;
 	my $binfmt = $formats{$name};
 	my $package = $binfmt->{package} eq ':' ? '<local>'
 						: $binfmt->{package};
@@ -575,6 +613,7 @@ sub act_display (;$)
     detector = $binfmt->{detector}
 EOF
     } else {
+	load_all_formats;
 	for my $id (keys %formats) {
 	    act_display $id;
 	}
@@ -700,18 +739,6 @@ if ($mode eq 'install') {
     $binfmt = Binfmt::Format->new ($name, package => $package, type => $type,
 				   %spec);
 }
-
-local *ADMINDIR;
-unless (opendir ADMINDIR, $admindir) {
-    quit "unable to open $admindir: $!";
-}
-for my $name (readdir ADMINDIR) {
-    if (-f "$admindir/$name") {
-	my $format = Binfmt::Format->load ($name, "$admindir/$name");
-	$formats{$name} = $format if defined $format;
-    }
-}
-closedir ADMINDIR;
 
 my %actions = (
     'install'	=> [\&act_install, $binfmt],
