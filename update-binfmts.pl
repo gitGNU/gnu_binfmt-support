@@ -18,15 +18,13 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 use strict;
+use feature 'say';
 
 use POSIX qw(uname);
-use Text::Wrap;
 use Binfmt::Lib qw($admindir $importdir $procdir $auxdir $cachedir quit warning);
 use Binfmt::Format;
 
 my $VERSION = '@VERSION@';
-
-$Text::Wrap::columns = 79;
 
 use vars qw($test);
 
@@ -40,7 +38,7 @@ my %formats;
 
 sub version ()
 {
-    print "update-binfmts $VERSION.\n"
+    say "update-binfmts $VERSION."
 	or die "unable to write version message: $!";
 }
 
@@ -92,7 +90,7 @@ sub usage_quit ($;@)
 {
     my $me = $0;
     $me =~ s#.*/##;
-    print STDERR wrap '', '', "$me:", @_, "\n";
+    say STDERR join(' ', "$me:", @_);
     usage;
     exit 2;
 }
@@ -180,7 +178,7 @@ sub get_binfmt_style ()
 sub load_binfmt_misc ()
 {
     if ($test) {
-	print "load binfmt_misc\n";
+	say "load binfmt_misc";
 	return 1;
     }
 
@@ -232,7 +230,7 @@ sub unload_binfmt_misc ()
     my $style = get_binfmt_style;
 
     if ($test) {
-	print "unload binfmt_misc ($style)\n";
+	say "unload binfmt_misc ($style)";
 	return 1;
     }
 
@@ -381,7 +379,7 @@ sub act_disable (;$)
 	# $procdir. This is in line with similar update-* tools in Debian.
 
 	if ($test) {
-	    print "disable $name\n";
+	    say "disable $name";
 	} else {
 	    local *PROCENTRY;
 	    unless (open PROCENTRY, ">$procdir/$name") {
@@ -461,7 +459,7 @@ sub act_install ($$)
     }
 
     if ($test) {
-	print "install the following binary format description:\n";
+	say "install the following binary format description:";
 	$binfmt->dump_stdout;
     } else {
 	$binfmt->write ("$admindir/$name.tmp") or return 0;
@@ -509,7 +507,7 @@ sub act_remove ($$)
 	return 0;
     }
     if ($test) {
-	print "remove $admindir/$name\n";
+	say "remove $admindir/$name";
     } else {
 	unless (unlink "$admindir/$name") {
 	    warning "unable to remove $admindir/$name: $!";
@@ -597,8 +595,7 @@ sub act_display (;$)
 {
     my $name = shift;
     if (defined $name) {
-	print "$name (", (-e "$procdir/$name" ? 'enabled' : 'disabled'),
-	      "):\n";
+	say "$name (", (-e "$procdir/$name" ? 'enabled' : 'disabled'), "):";
 	load_format $name;
 	my $binfmt = $formats{$name};
 	my $package = $binfmt->{package} eq ':' ? '<local>'

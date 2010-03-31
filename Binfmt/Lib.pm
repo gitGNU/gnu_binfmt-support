@@ -21,8 +21,7 @@ package Binfmt::Lib;
 
 use strict;
 use vars qw(@ISA @EXPORT_OK $admindir $importdir $procdir $auxdir $cachedir);
-
-use Text::Wrap;
+use feature 'say';
 
 use Exporter ();
 @ISA = qw(Exporter);
@@ -38,7 +37,7 @@ sub quit ($;@)
 {
     my $me = $0;
     $me =~ s#.*/##;
-    print STDERR wrap '', '', "$me:", @_, "\n";
+    say STDERR join(' ', "$me:", @_);
     exit 2;
 }
 
@@ -46,7 +45,7 @@ sub quit ($;@)
 sub warning ($;@) {
     my $me = $0;
     $me =~ s#.*/##;
-    print STDERR wrap '', '', "$me: warning:", @_, "\n";
+    say STDERR join(' ', "$me: warning:", @_);
 }
 
 1;

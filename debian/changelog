@@ -1,3 +1,10 @@
+binfmt-support (1.2.19) UNRELEASED; urgency=low
+
+  * Drop error/warning wrapping; it was cute in 2000, but I find it annoying
+    now.  Use the 'say' feature in Perl 5.10.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 31 Mar 2010 11:51:34 +0100
+
 binfmt-support (1.2.18) unstable; urgency=low
 
   * Convert to source format 3.0 (native).
