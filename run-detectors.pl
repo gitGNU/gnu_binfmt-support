@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 
 # Copyright (c) 2002 Colin Watson <cjwatson@debian.org>.
 #
@@ -16,6 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+use warnings;
 use strict;
 
 use Binfmt::Lib qw($admindir $procdir quit warning);

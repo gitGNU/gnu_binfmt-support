@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 
 # Copyright (c) 2000, 2001, 2002 Colin Watson <cjwatson@debian.org>.
 # See update-binfmts(8) for documentation.
@@ -17,6 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+use warnings;
 use strict;
 use feature 'say';
 
