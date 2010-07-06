@@ -144,6 +144,7 @@ sub get_import ($)
     while (<IMPORT>) {
 	chomp;
 	my ($name, $value) = split ' ', $_, 2;
+	$value =~ s/\s+$// if defined $value;
 	$import{lc $name} = $value;
     }
     close IMPORT;
