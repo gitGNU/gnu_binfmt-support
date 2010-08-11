@@ -4,6 +4,7 @@ binfmt-support (1.2.19) UNRELEASED; urgency=low
     now.  Use the 'say' feature from Perl 5.10.
   * Convert from 'perl -w' to 'use warnings'.
   * Strip trailing whitespace from values in database and format files.
+  * Upgrade to debhelper 8.
 
  -- Colin Watson <cjwatson@debian.org>  Wed, 31 Mar 2010 11:51:34 +0100
 
