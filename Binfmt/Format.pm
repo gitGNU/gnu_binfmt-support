@@ -45,12 +45,12 @@ sub load ($$$;$)
 		quit "$filename corrupt: out of binfmt data reading $field";
 	    }
 	}
-	$self->{$field} ~= s/\s+$//;
+	$self->{$field} =~ s/\s+$//;
     }
     for my $field (@optional_fields) {
 	$self->{$field} = <BINFMT>;
 	$self->{$field} = '' unless defined $self->{$field};
-	$self->{$field} ~= s/\s+$//;
+	$self->{$field} =~ s/\s+$//;
     }
     close BINFMT;
     chomp $self->{$_} for keys %$self;

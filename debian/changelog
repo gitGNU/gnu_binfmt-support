@@ -1,3 +1,9 @@
+binfmt-support (1.2.20) UNRELEASED; urgency=low
+
+  * Fix =~ operator typo in Binfmt::Format.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 16 Nov 2010 17:56:28 +0000
+
 binfmt-support (1.2.19) experimental; urgency=low
 
   * Drop error/warning wrapping; it was cute in 2000, but I find it annoying
