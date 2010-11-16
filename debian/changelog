@@ -1,4 +1,4 @@
-binfmt-support (1.2.19) UNRELEASED; urgency=low
+binfmt-support (1.2.19) experimental; urgency=low
 
   * Drop error/warning wrapping; it was cute in 2000, but I find it annoying
     now.  Use the 'say' feature from Perl 5.10.
@@ -6,7 +6,7 @@ binfmt-support (1.2.19) UNRELEASED; urgency=low
   * Strip trailing whitespace from values in database and format files.
   * Upgrade to debhelper 8.
 
- -- Colin Watson <cjwatson@debian.org>  Wed, 31 Mar 2010 11:51:34 +0100
+ -- Colin Watson <cjwatson@debian.org>  Tue, 16 Nov 2010 16:16:09 +0000
 
 binfmt-support (1.2.18) unstable; urgency=low
 
