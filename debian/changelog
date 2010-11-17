@@ -1,3 +1,10 @@
+binfmt-support (2.0.0) UNRELEASED; urgency=low
+
+  * Rewrite in C.
+  * Upgrade to GPLv3 or later, mostly due to Gnulib.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 19 Oct 2010 01:30:35 +0100
+
 binfmt-support (1.2.20) experimental; urgency=low
 
   * Fix =~ operator typo in Binfmt::Format.

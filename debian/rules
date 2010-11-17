@@ -8,13 +8,5 @@ dtmp = $(CURDIR)/debian/binfmt-support
 %:
 	dh $@
 
-override_dh_install:
-	sed 's/@VERSION@/$(version)/g' update-binfmts.pl \
-		> $(dtmp)/usr/sbin/update-binfmts
-	chmod 755 $(dtmp)/usr/sbin/update-binfmts
-	install -m755 run-detectors.pl \
-		$(dtmp)/usr/share/binfmt-support/run-detectors
-	dh_install
-
 override_dh_installinit:
 	dh_installinit --error-handler=true -- start 90 2 3 4 5 .
