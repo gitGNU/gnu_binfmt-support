@@ -6,7 +6,7 @@ version = $(shell dpkg-parsechangelog | \
 dtmp = $(CURDIR)/debian/binfmt-support
 
 %:
-	dh $@
+	dh $@ --builddirectory=debian/build
 
 override_dh_installinit:
 	dh_installinit --error-handler=true -- start 90 2 3 4 5 .

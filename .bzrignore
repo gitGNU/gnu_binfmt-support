@@ -9,6 +9,7 @@
 debian/*.debhelper*
 debian/*.substvars
 debian/binfmt-support
+debian/build
 debian/files
 gnulib/lib/Makefile
 gnulib/lib/alloca.h
