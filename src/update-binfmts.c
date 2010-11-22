@@ -1029,6 +1029,7 @@ int main (int argc, char **argv)
 
     check_supported_os ();
 
+    argp_err_exit_status = 2;
     if (argp_parse (&argp, argc, argv, 0, 0, 0))
 	exit (argp_err_exit_status);
 
