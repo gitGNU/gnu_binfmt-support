@@ -15,8 +15,7 @@ init () {
 	tmpdir="tmp-${0##*/}"
 	mkdir -p "$tmpdir" || exit $?
 	trap cleanup HUP INT QUIT TERM
-	mkdir -p "$tmpdir/usr/share/binfmts" "$tmpdir/var/cache/binfmts" \
-		 "$tmpdir/var/lib/binfmts"
+	mkdir -p "$tmpdir/usr/share/binfmts" "$tmpdir/var/lib/binfmts"
 }
 
 fake_proc () {
@@ -35,8 +34,7 @@ fake_proc () {
 
 update_binfmts () {
 	$UPDATE_BINFMTS --admindir "$tmpdir/var/lib/binfmts" \
-			--importdir "$tmpdir/usr/share/binfmts" \
-			--cachedir "$tmpdir/var/cache/binfmts" "$@"
+			--importdir "$tmpdir/usr/share/binfmts" "$@"
 }
 
 update_binfmts_proc () {

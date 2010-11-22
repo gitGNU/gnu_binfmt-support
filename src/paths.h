@@ -18,4 +18,4 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-const char *admindir, *importdir, *procdir, *auxdir, *cachedir;
+const char *admindir, *importdir, *procdir, *auxdir;

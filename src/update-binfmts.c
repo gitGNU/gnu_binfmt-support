@@ -324,9 +324,10 @@ static void load_all_formats (int quiet)
 /* Enable a binary format in the kernel. */
 static int act_enable (const char *name)
 {
+    if (!load_binfmt_misc ())
+	return 1;
+
     if (name) {
-	int cacheonly = 0;
-	char *procdir_name;
 	const struct binfmt *binfmt;
 	char type;
 	int need_detector;
@@ -334,12 +335,6 @@ static int act_enable (const char *name)
 	const char *flags;
 	char *regstring;
 
-	if (!load_binfmt_misc ())
-	    cacheonly = 1;
-	procdir_name = xasprintf ("%s/%s", procdir, name);
-	if (exists (procdir_name))
-	    cacheonly = 1;
-	free (procdir_name);
 	load_format (name, 0);
 	if (!test && !kvhash_exists (formats, name)) {
 	    warning ("%s not in database of installed binary formats.", name);
@@ -381,32 +376,18 @@ static int act_enable (const char *name)
 	    printf ("enable %s with the following format string:\n %s",
 		    name, regstring);
 	else {
-	    char *cachedir_name;
-	    FILE *cache_file;
+	    FILE *register_file;
 
-	    cachedir_name = xasprintf ("%s/%s", cachedir, name);
-	    cache_file = fopen (cachedir_name, "w");
-	    if (cache_file) {
-		fputs (regstring, cache_file);
-		if (fclose (cache_file))
-		    warning_err ("unable to close %s", cachedir_name);
-	    } else
-		warning_err ("unable to open %s for writing", cachedir_name);
-	    free (cachedir_name);
-	    if (!cacheonly) {
-		FILE *register_file;
-
-		register_file = fopen (path_register, "w");
-		if (!register_file) {
-		    warning_err ("unable to open %s for writing",
-				 path_register);
-		    return 0;
-		}
-		fputs (regstring, register_file);
-		if (fclose (register_file)) {
-		    warning_err ("unable to close %s", path_register);
-		    return 0;
-		}
+	    register_file = fopen (path_register, "w");
+	    if (!register_file) {
+		warning_err ("unable to open %s for writing",
+			     path_register);
+		return 0;
+	    }
+	    fputs (regstring, register_file);
+	    if (fclose (register_file)) {
+		warning_err ("unable to close %s", path_register);
+		return 0;
 	    }
 	}
 	return 1;
@@ -415,8 +396,14 @@ static int act_enable (const char *name)
 	struct kvelem *format_iter;
 
 	load_all_formats (0);
-	HASH_FOR_EACH (format_iter, formats)
-	    worked &= act_enable (format_iter->key);
+	HASH_FOR_EACH (format_iter, formats) {
+	    char *procdir_name;
+
+	    procdir_name = xasprintf ("%s/%s", procdir, format_iter->key);
+	    if (!exists (procdir_name))
+		worked &= act_enable (format_iter->key);
+	    free (procdir_name);
+	}
 	return worked;
     }
 }
@@ -618,17 +605,12 @@ static int act_remove (const char *name, const char *package)
     if (test)
 	printf ("remove %s", admindir_name);
     else {
-	char *cachedir_name;
-
 	if (unlink (admindir_name) == -1) {
 	    warning_err ("unable to remove %s", admindir_name);
 	    free (admindir_name);
 	    return 0;
 	}
 	kvhash_delete (formats, name);
-	cachedir_name = xasprintf ("%s/%s", cachedir, name);
-	unlink (cachedir_name);
-	free (cachedir_name);
     }
     free (admindir_name);
     return 1;
@@ -778,7 +760,6 @@ enum opts {
     OPT_PACKAGE,
     OPT_ADMINDIR,
     OPT_IMPORTDIR,
-    OPT_CACHEDIR,
     OPT_PROCDIR,
     OPT_TEST
 };
@@ -820,8 +801,6 @@ static struct argp_option options[] = {
 	"administration directory (default: /var/lib/binfmts)", 2 },
     { "importdir",	OPT_IMPORTDIR,	"DIRECTORY",	0,
 	"import directory (default: /usr/share/binfmts)", 3 },
-    { "cachedir",	OPT_CACHEDIR,	"DIRECTORY",	0,
-	"cache directory (default: /var/cache/binfmts)", 4 },
     { "procdir",	OPT_PROCDIR,	"DIRECTORY",	OPTION_HIDDEN,
 	"proc directory, for test suite use only "
 	"(default: /proc/sys/fs/binfmt_misc)", 5 },
@@ -969,10 +948,6 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 
 	case OPT_IMPORTDIR:
 	    importdir = arg;
-	    return 0;
-
-	case OPT_CACHEDIR:
-	    cachedir = arg;
 	    return 0;
 
 	case OPT_PROCDIR:
