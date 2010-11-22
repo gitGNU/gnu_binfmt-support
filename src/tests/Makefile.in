@@ -717,6 +717,7 @@ ALL_TESTS = \
 
 @CROSS_COMPILING_FALSE@TESTS = $(ALL_TESTS)
 dist_check_SCRIPTS = binfmt_misc.py testlib.sh $(ALL_TESTS)
+CLEANFILES = binfmt_misc.pyc binfmt_misc.pyo
 all: all-am
 
 .SUFFIXES:
@@ -902,6 +903,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

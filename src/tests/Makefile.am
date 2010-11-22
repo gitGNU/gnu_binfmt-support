@@ -28,3 +28,5 @@ TESTS = $(ALL_TESTS)
 endif
 
 dist_check_SCRIPTS = binfmt_misc.py testlib.sh $(ALL_TESTS)
+
+CLEANFILES = binfmt_misc.pyc binfmt_misc.pyo
