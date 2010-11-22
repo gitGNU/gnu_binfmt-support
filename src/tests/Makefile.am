@@ -22,6 +22,7 @@ TESTS_ENVIRONMENT = PATH=..:$$PATH top_builddir=$(top_builddir) $(SHELL)
 
 ALL_TESTS = \
 	install \
+	enable \
 	detectors
 if !CROSS_COMPILING
 TESTS = $(ALL_TESTS)

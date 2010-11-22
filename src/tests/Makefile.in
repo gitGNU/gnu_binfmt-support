@@ -713,6 +713,7 @@ top_srcdir = @top_srcdir@
 TESTS_ENVIRONMENT = PATH=..:$$PATH top_builddir=$(top_builddir) $(SHELL)
 ALL_TESTS = \
 	install \
+	enable \
 	detectors
 
 @CROSS_COMPILING_FALSE@TESTS = $(ALL_TESTS)
