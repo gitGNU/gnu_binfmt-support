@@ -1,6 +1,6 @@
 binfmt-support (2.0.0) UNRELEASED; urgency=low
 
-  * Rewrite in C.
+  * Rewrite in C (closes: #602920).
   * Upgrade to GPLv3 or later, mostly due to Gnulib.
   * Use a separate build directory.
   * Add a test suite.  This does nothing useful during a default Debian
