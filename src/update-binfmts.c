@@ -886,7 +886,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
     switch (key) {
 	case OPT_INSTALL:
 	case OPT_REMOVE:
-	    if (state->next >= state->argc - 2)
+	    if (state->next > state->argc - 2)
 		argp_error (state, "--%s needs <name> <path>",
 			    (key == OPT_INSTALL) ? "install" : "remove");
 	    name = state->argv[state->next++];
