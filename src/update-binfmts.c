@@ -206,10 +206,19 @@ static int load_binfmt_misc (void)
 
     style = get_binfmt_style ();
     if (style == BINFMT_PROCFS && !is_file (path_register)) {
-	pipeline *modprobe = pipeline_new_command_args
-	    ("/sbin/modprobe", "-q", "binfmt_misc", NULL);
+	int failed = 0;
 
-	if (pipeline_run (modprobe)) {
+	if (access ("/sbin/modprobe", X_OK))
+	    failed = 1;
+	else {
+	    pipeline *modprobe = pipeline_new_command_args
+		("/sbin/modprobe", "-q", "binfmt_misc", NULL);
+
+	    if (pipeline_run (modprobe))
+		failed = 1;
+	}
+
+	if (failed) {
 	    warning ("Couldn't load the binfmt_misc module.");
 	    return 0;
 	}
