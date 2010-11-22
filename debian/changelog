@@ -1,4 +1,4 @@
-binfmt-support (2.0.0) UNRELEASED; urgency=low
+binfmt-support (2.0.0) experimental; urgency=low
 
   * Rewrite in C (closes: #602920).
   * Upgrade to GPLv3 or later, mostly due to Gnulib.
@@ -11,7 +11,7 @@ binfmt-support (2.0.0) UNRELEASED; urgency=low
   * Remove cache directory hack, no longer necessary now that we aren't
     pulling in Perl at boot time.
 
- -- Colin Watson <cjwatson@debian.org>  Tue, 19 Oct 2010 01:30:35 +0100
+ -- Colin Watson <cjwatson@debian.org>  Mon, 22 Nov 2010 11:15:58 +0000
 
 binfmt-support (1.2.20) experimental; urgency=low
 
