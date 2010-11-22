@@ -30,6 +30,7 @@
 
 #include <pipeline.h>
 
+#include "argp.h"
 #include "gl_xlist.h"
 #include "gl_array_list.h"
 #include "xalloc.h"
@@ -116,6 +117,39 @@ static void load_all_formats (gl_list_t *formats)
     closedir (dir);
 }
 
+const char *argp_program_version = "binfmt-support " PACKAGE_VERSION;
+const char *argp_program_bug_address = PACKAGE_BUGREPORT;
+
+enum opts {
+    OPT_ADMINDIR = 256
+};
+
+static struct argp_option options[] = {
+    { "admindir",	OPT_ADMINDIR,	"DIRECTORY",	0,
+	"administration directory (default: /var/lib/binfmts)" },
+    { 0 }
+};
+
+static error_t parse_opt (int key, char *arg, struct argp_state *state)
+{
+    switch (key) {
+	case OPT_ADMINDIR:
+	    admindir = arg;
+	    return 0;
+    }
+
+    return ARGP_ERR_UNKNOWN;
+}
+
+static struct argp argp = {
+    options, parse_opt,
+    "<target>",
+    "\v"
+    "Copyright (C) 2002, 2010 Colin Watson.\n"
+    "This is free software; see the GNU General Public License version 3 or\n"
+    "later for copying conditions."
+};
+
 int main (int argc, char **argv)
 {
     gl_list_t formats, ok_formats;
@@ -125,12 +159,16 @@ int main (int argc, char **argv)
     char *buf;
     FILE *target_file;
     const char *dot, *extension = NULL;
+    int arg_index;
     char **real_argv;
     int i;
 
     program_name = xstrdup ("run-detectors");
 
-    if (argc < 2)
+    argp_err_exit_status = 2;
+    if (argp_parse (&argp, argc, argv, ARGP_IN_ORDER, &arg_index, 0))
+	exit (argp_err_exit_status);
+    if (arg_index >= argc)
 	quit ("argument required");
 
     load_all_formats (&formats);
@@ -155,9 +193,9 @@ int main (int argc, char **argv)
     gl_list_iterator_free (&format_iter);
 
     buf = xzalloc (toread);
-    target_file = fopen (argv[1], "r");
+    target_file = fopen (argv[arg_index], "r");
     if (!target_file)
-	quit_err ("unable to open %s", argv[1]);
+	quit_err ("unable to open %s", argv[arg_index]);
     if (fread (buf, 1, toread, target_file) == 0)
 	/* Ignore errors; the buffer is zero-filled so attempts to match
 	 * beyond the data read here will fail anyway.
@@ -176,7 +214,7 @@ int main (int argc, char **argv)
      * deliberately makes a set-id binary a binfmt handler, in which case
      * "don't do that, then".
      */
-    dot = strrchr (argv[1], '.');
+    dot = strrchr (argv[arg_index], '.');
     if (dot)
 	extension = dot + 1;
 
@@ -201,10 +239,10 @@ int main (int argc, char **argv)
     }
     gl_list_iterator_free (&format_iter);
 
-    real_argv = xcalloc (argc + 1, sizeof *real_argv);
-    for (i = 1; i < argc; ++i)
-	real_argv[i] = argv[i];
-    real_argv[argc] = NULL;
+    real_argv = xcalloc (argc - arg_index + 2, sizeof *real_argv);
+    for (i = arg_index; i < argc; ++i)
+	real_argv[i - arg_index + 1] = argv[i];
+    real_argv[argc - arg_index + 1] = NULL;
 
     /* Everything in ok_formats is now a candidate.  Loop through twice,
      * once to try everything with a detector and once to try everything
@@ -216,8 +254,8 @@ int main (int argc, char **argv)
 	if (*binfmt->detector) {
 	    pipeline *detector;
 
-	    detector = pipeline_new_command_args (binfmt->detector, argv[1],
-						  NULL);
+	    detector = pipeline_new_command_args (binfmt->detector,
+						  argv[arg_index], NULL);
 	    if (pipeline_run (detector) == 0) {
 		real_argv[0] = (char *) binfmt->interpreter;
 		fflush (NULL);
@@ -240,5 +278,5 @@ int main (int argc, char **argv)
     }
     gl_list_iterator_free (&format_iter);
 
-    quit ("unable to find an interpreter for %s", argv[1]);
+    quit ("unable to find an interpreter for %s", argv[arg_index]);
 }

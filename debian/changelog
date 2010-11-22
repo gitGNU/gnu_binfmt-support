@@ -5,6 +5,9 @@ binfmt-support (2.0.0) UNRELEASED; urgency=low
   * Use a separate build directory.
   * Add a test suite.  This does nothing useful during a default Debian
     package build as it currently requires FUSE, but it can be run by hand.
+  * Add option parsing to run-detectors, mainly so that we can have an
+    --admindir option for use by the test suite but also to provide a useful
+    --help.
 
  -- Colin Watson <cjwatson@debian.org>  Tue, 19 Oct 2010 01:30:35 +0100
 
