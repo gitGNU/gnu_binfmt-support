@@ -1049,6 +1049,7 @@ int main (int argc, char **argv)
 	ADD_SPEC (mask);
 	ADD_SPEC (offset);
 	ADD_SPEC (extension);
+	ADD_SPEC (interpreter);
 	ADD_SPEC (detector);
 	ADD_SPEC (credentials);
 #undef ADD_SPEC
