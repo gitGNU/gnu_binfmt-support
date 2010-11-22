@@ -18,37 +18,12 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-SUBDIRS = tests
+TESTS_ENVIRONMENT = PATH=..:$$PATH top_builddir=$(top_builddir) $(SHELL)
 
-sbin_PROGRAMS = update-binfmts
-pkglib_PROGRAMS = run-detectors
+ALL_TESTS = \
+	install
+if !CROSS_COMPILING
+TESTS = $(ALL_TESTS)
+endif
 
-AM_CPPFLAGS = \
-	-I$(top_builddir)/gnulib/lib \
-	-I$(top_srcdir)/gnulib/lib
-
-AM_CFLAGS = \
-	$(libpipeline_CFLAGS)
-
-LIBGNU = $(top_builddir)/gnulib/lib/libgnu.a
-
-update_binfmts_LDADD = $(libpipeline_LIBS) $(LIBGNU)
-run_detectors_LDADD = $(libpipeline_LIBS) $(LIBGNU)
-
-COMMON = \
-	error.c \
-	error.h \
-	format.c \
-	format.h \
-	kvhash.c \
-	kvhash.h \
-	paths.c \
-	paths.h
-
-update_binfmts_SOURCES = \
-	$(COMMON) \
-	update-binfmts.c
-
-run_detectors_SOURCES = \
-	$(COMMON) \
-	run-detectors.c
+dist_check_SCRIPTS = binfmt_misc.py testlib.sh $(ALL_TESTS)

@@ -770,6 +770,7 @@ enum opts {
     OPT_ADMINDIR,
     OPT_IMPORTDIR,
     OPT_CACHEDIR,
+    OPT_PROCDIR,
     OPT_TEST
 };
 
@@ -812,8 +813,11 @@ static struct argp_option options[] = {
 	"import directory (default: /usr/share/binfmts)", 3 },
     { "cachedir",	OPT_CACHEDIR,	"DIRECTORY",	0,
 	"cache directory (default: /var/cache/binfmts)", 4 },
+    { "procdir",	OPT_PROCDIR,	"DIRECTORY",	OPTION_HIDDEN,
+	"proc directory, for test suite use only "
+	"(default: /proc/sys/fs/binfmt_misc)", 5 },
     { "test",		OPT_TEST,	0,		0,
-	"don't do anything, just demonstrate", 5 },
+	"don't do anything, just demonstrate", 6 },
     { 0 }
 };
 
@@ -960,6 +964,10 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 
 	case OPT_CACHEDIR:
 	    cachedir = arg;
+	    return 0;
+
+	case OPT_PROCDIR:
+	    procdir = arg;
 	    return 0;
 
 	case OPT_TEST:

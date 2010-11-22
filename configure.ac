@@ -59,8 +59,12 @@ AC_TYPE_SIZE_T
 
 PKG_CHECK_MODULES([libpipeline], [libpipeline])
 
+# If we're cross-compiling, tests won't work.
+AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" = xyes])
+
 AC_CONFIG_FILES([Makefile
 	gnulib/lib/Makefile
 	man/Makefile
-	src/Makefile])
+	src/Makefile
+	src/tests/Makefile])
 AC_OUTPUT

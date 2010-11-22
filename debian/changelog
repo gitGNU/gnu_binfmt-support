@@ -3,6 +3,8 @@ binfmt-support (2.0.0) UNRELEASED; urgency=low
   * Rewrite in C.
   * Upgrade to GPLv3 or later, mostly due to Gnulib.
   * Use a separate build directory.
+  * Add a test suite.  This does nothing useful during a default Debian
+    package build as it currently requires FUSE, but it can be run by hand.
 
  -- Colin Watson <cjwatson@debian.org>  Tue, 19 Oct 2010 01:30:35 +0100
 
