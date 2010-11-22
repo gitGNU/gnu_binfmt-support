@@ -1,6 +1,7 @@
 failures=0
 
 : ${UPDATE_BINFMTS=update-binfmts}
+: ${RUN_DETECTORS=run-detectors}
 
 FAKE_PROC=false
 cleanup () {
@@ -40,6 +41,10 @@ update_binfmts () {
 
 update_binfmts_proc () {
 	update_binfmts --procdir "$tmpdir/proc" "$@"
+}
+
+run_detectors () {
+	$RUN_DETECTORS --admindir "$tmpdir/var/lib/binfmts" "$@"
 }
 
 expect_pass () {

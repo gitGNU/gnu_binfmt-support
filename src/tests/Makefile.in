@@ -712,7 +712,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS_ENVIRONMENT = PATH=..:$$PATH top_builddir=$(top_builddir) $(SHELL)
 ALL_TESTS = \
-	install
+	install \
+	detectors
 
 @CROSS_COMPILING_FALSE@TESTS = $(ALL_TESTS)
 dist_check_SCRIPTS = binfmt_misc.py testlib.sh $(ALL_TESTS)
