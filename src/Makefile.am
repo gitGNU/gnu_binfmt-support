@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-## Copyright (C) 2010 Colin Watson.
+## Copyright (C) 2010, 2011 Colin Watson.
 ##
 ## This file is part of binfmt-support.
 ##
@@ -38,6 +38,8 @@ run_detectors_LDADD = $(libpipeline_LIBS) $(LIBGNU)
 COMMON = \
 	error.c \
 	error.h \
+	find.c \
+	find.h \
 	format.c \
 	format.h \
 	kvhash.c \

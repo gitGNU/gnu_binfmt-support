@@ -1,5 +1,5 @@
 .\" update-binfmts.8
-.Dd January 6, 2002
+.Dd January 24, 2011
 .Os Debian
 .ds volume-operating-system Debian
 .Dt UPDATE\-BINFMTS 8
@@ -36,6 +36,11 @@
 .Op Ar options
 .Fl Fl disable
 .Op Ar name
+.br
+.Nm
+.Op Ar options
+.Fl Fl find
+.Op Ar path
 .Sh DESCRIPTION
 Versions 2.1.43 and later of the Linux kernel have contained the binfmt_misc
 module.
@@ -165,6 +170,23 @@ or all known binary formats if no
 is given, in the kernel, thus disabling direct execution of matching files.
 You must have binfmt_misc compiled into the kernel or loaded as a module for
 this to work.
+.It Fl Fl find Op Ar path
+Print the list of interpreters that will be tried in sequence when
+attempting to execute
+.Ar path ,
+one per line.
+The first one for which
+.Xr execvp 3
+succeeds will be used.
+.Pp
+Note that if multiple formats match an executable, then the order is in
+general not defined, and may not be preserved between
+.Nm
+operations, so you should generally try to ensure that this option prints at
+most one line for any given
+.Ar path .
+The exception to this is that any format with a userspace detector will be
+run before any format without a userspace detector.
 .El
 .Ss BINARY FORMAT SPECIFICATIONS
 .Bl -tag -width 4n
@@ -274,7 +296,7 @@ directly.
 .An -nosplit
 .Nm
 is copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
-2010
+2010, 2011
 .An Colin Watson Aq cjwatson@debian.org .
 See the GNU General Public License version 3 or later for copying
 conditions.

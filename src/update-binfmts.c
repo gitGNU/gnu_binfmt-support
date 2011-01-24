@@ -1,7 +1,7 @@
 /* update-binfmts.c - maintain registry of executable binary formats
  *
  * Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
- *               2010 Colin Watson <cjwatson@debian.org>.
+ *               2010, 2011 Colin Watson <cjwatson@debian.org>.
  * See update-binfmts(8) for documentation.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,11 +38,13 @@
 #include <pipeline.h>
 
 #include "argp.h"
+#include "gl_xlist.h"
 #include "hash.h"
 #include "xalloc.h"
 #include "xvasprintf.h"
 
 #include "error.h"
+#include "find.h"
 #include "format.h"
 #include "kvhash.h"
 #include "paths.h"
@@ -741,6 +743,25 @@ static int act_display (const char *name)
     return 1;
 }
 
+static int act_find (const char *executable)
+{
+    gl_list_t interpreters;
+    gl_list_iterator_t interpreter_iter;
+    const struct binfmt *binfmt;
+
+    interpreters = find_interpreters (executable);
+
+    interpreter_iter = gl_list_iterator (interpreters);
+    while (gl_list_iterator_next (&interpreter_iter, (const void **) &binfmt,
+				  NULL))
+	printf ("%s\n", binfmt->interpreter);
+    gl_list_iterator_free (&interpreter_iter);
+
+    gl_list_free (interpreters);
+
+    return 1;
+}
+
 const char *argp_program_version = "binfmt-support " PACKAGE_VERSION;
 const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 
@@ -751,6 +772,7 @@ enum opts {
     OPT_DISPLAY,
     OPT_ENABLE,
     OPT_DISABLE,
+    OPT_FIND,
     OPT_MAGIC,
     OPT_MASK,
     OPT_OFFSET,
@@ -781,6 +803,8 @@ static struct argp_option options[] = {
     { "disable",	OPT_DISABLE,	0,
 	OPTION_ARG_OPTIONAL | OPTION_HIDDEN,
 	"disable binary format in kernel" },
+    { "find",		OPT_FIND,	0,		OPTION_HIDDEN,
+	"find list of interpreters for an executable" },
     { "magic",		OPT_MAGIC,	"BYTE-SEQUENCE",
 	OPTION_HIDDEN,
 	"match files starting with this byte sequence" },
@@ -809,7 +833,7 @@ static struct argp_option options[] = {
     { 0 }
 };
 
-const char *package, *name;
+const char *package, *name, *executable;
 static enum opts mode, type;
 
 static struct {
@@ -831,6 +855,7 @@ static const char *mode_name (enum opts m)
 	case OPT_DISPLAY:	return "display";
 	case OPT_ENABLE:	return "enable";
 	case OPT_DISABLE:	return "disable";
+	case OPT_FIND:		return "find";
 	default:		return "";
     }
 }
@@ -854,6 +879,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 	case OPT_DISPLAY:
 	case OPT_ENABLE:
 	case OPT_DISABLE:
+	case OPT_FIND:
 	    if (mode)
 		argp_error (state, "two modes given: --%s and --%s",
 			    mode_name (mode), mode_name (key));
@@ -894,6 +920,12 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 	case OPT_DISABLE:
 	    if (state->next < state->argc)
 		name = state->argv[state->next++];
+	    return 0;
+
+	case OPT_FIND:
+	    if (state->next >= state->argc)
+		argp_error (state, "--find needs <path>");
+	    executable = state->argv[state->next++];
 	    return 0;
 
 	case OPT_MAGIC:
@@ -962,7 +994,8 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 	    if (!mode)
 		argp_error (state,
 			    "you must use one of --install, --remove, "
-			    "--import, --display, --enable, --disable");
+			    "--import, --display, --enable, --disable, "
+			    "--find");
 	    else if (mode == OPT_INSTALL) {
 		if (!type)
 		    argp_error (state, "--install requires a <spec> option");
@@ -984,7 +1017,8 @@ static struct argp argp = {
     "--import [<name>]\n"
     "--display [<name>]\n"
     "--enable [<name>]\n"
-    "--disable [<name>]",
+    "--disable [<name>]\n"
+    "--find <path>",
     "\n"
     "where <spec> is one of\n"
     "\n"
@@ -1059,6 +1093,8 @@ int main (int argc, char **argv)
 	status = act_enable (name);
     else if (mode == OPT_DISABLE)
 	status = act_disable (name);
+    else if (mode == OPT_FIND)
+	status = act_find (executable);
 
     if (status)
 	return 0;

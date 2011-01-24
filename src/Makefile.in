@@ -122,8 +122,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(sbindir)"
 PROGRAMS = $(pkglib_PROGRAMS) $(sbin_PROGRAMS)
-am__objects_1 = error.$(OBJEXT) format.$(OBJEXT) kvhash.$(OBJEXT) \
-	paths.$(OBJEXT)
+am__objects_1 = error.$(OBJEXT) find.$(OBJEXT) format.$(OBJEXT) \
+	kvhash.$(OBJEXT) paths.$(OBJEXT)
 am_run_detectors_OBJECTS = $(am__objects_1) run-detectors.$(OBJEXT)
 run_detectors_OBJECTS = $(am_run_detectors_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -789,6 +789,8 @@ run_detectors_LDADD = $(libpipeline_LIBS) $(LIBGNU)
 COMMON = \
 	error.c \
 	error.h \
+	find.c \
+	find.h \
 	format.c \
 	format.h \
 	kvhash.c \
@@ -926,6 +928,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/find.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/format.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kvhash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/paths.Po@am__quote@
