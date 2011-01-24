@@ -28,4 +28,5 @@ gnulib/lib/wchar.h
 man/Makefile
 src/Makefile
 src/run-detectors
+src/tests/Makefile
 src/update-binfmts
