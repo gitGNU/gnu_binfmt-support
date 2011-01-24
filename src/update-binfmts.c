@@ -646,7 +646,7 @@ static int act_import (const char *name)
 	}
 
 	import = get_import (path);
-	if (!hash_get_n_entries (import)) {
+	if (!import || !hash_get_n_entries (import)) {
 	    warning ("couldn't find information about '%s' to import", id);
 	    free (path);
 	    return 0;
