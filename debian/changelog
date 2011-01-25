@@ -5,6 +5,8 @@ binfmt-support (2.0.1) UNRELEASED; urgency=low
   * Fix crash if get_import returns NULL (LP: #686115).
   * Fix hexadecimal expansion to ensure that we only ever parse exactly two
     hex digits.
+  * Use mem* functions rather than str* on binary data when finding
+    interpreters.
 
  -- Colin Watson <cjwatson@debian.org>  Mon, 24 Jan 2011 16:52:58 +0000
 

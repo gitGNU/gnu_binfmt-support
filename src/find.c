@@ -33,7 +33,6 @@
 #include "gl_xlist.h"
 #include "gl_array_list.h"
 #include "xalloc.h"
-#include "xstrndup.h"
 #include "xvasprintf.h"
 
 #include "error.h"
@@ -143,8 +142,7 @@ gl_list_t find_interpreters (const char *path)
 	if (!strcmp (binfmt->type, "magic")) {
 	    size_t size;
 
-	    size = atoi (binfmt->offset);
-	    size += binfmt->magic ? strlen (binfmt->magic) : 0;
+	    size = atoi (binfmt->offset) + binfmt->magic_size;
 	    if (size > toread)
 		toread = size;
 	}
@@ -184,13 +182,14 @@ gl_list_t find_interpreters (const char *path)
 	if (!strcmp (binfmt->type, "magic")) {
 	    char *segment;
 
-	    segment = xstrndup (buf + atoi (binfmt->offset),
-				binfmt->magic ? strlen (binfmt->magic) : 0);
+	    segment = xmalloc (binfmt->magic_size);
+	    memcpy (segment, buf + atoi (binfmt->offset), binfmt->magic_size);
 	    if (*binfmt->mask)
-		for (size_t i = 0; i < toread; ++i)
+		for (size_t i = 0; i < toread && i < binfmt->magic_size; ++i)
 		    segment[i] &= binfmt->mask[i];
 	    if (!memcmp (segment, binfmt->magic, binfmt->magic_size))
 		gl_list_add_last (ok_formats, binfmt);
+	    free (segment);
 	} else {
 	    if (extension && !strcmp (extension, binfmt->magic))
 		gl_list_add_last (ok_formats, binfmt);
