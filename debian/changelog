@@ -1,4 +1,4 @@
-binfmt-support (2.0.1) UNRELEASED; urgency=low
+binfmt-support (2.0.1) experimental; urgency=low
 
   * Add a --find option to print the list of interpreters for an executable.
     Requested by Loïc Minier.
@@ -8,7 +8,7 @@ binfmt-support (2.0.1) UNRELEASED; urgency=low
   * Use mem* functions rather than str* on binary data when finding
     interpreters.
 
- -- Colin Watson <cjwatson@debian.org>  Mon, 24 Jan 2011 16:52:58 +0000
+ -- Colin Watson <cjwatson@debian.org>  Tue, 25 Jan 2011 14:30:52 +0000
 
 binfmt-support (2.0.0) experimental; urgency=low
 
