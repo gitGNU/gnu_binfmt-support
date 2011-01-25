@@ -26,7 +26,7 @@ struct binfmt {
     char *type;
     char *offset;
     char *magic;
-    size_t magic_size; /* only used in run-detectors */
+    size_t magic_size; /* only used in --find and run-detectors */
     char *mask;
     char *interpreter;
     char *detector;
