@@ -51,9 +51,15 @@ static size_t expand_hex (char **str)
     s = *str;
     while (*s) {
 	if (s <= *str + len - 4 && s[0] == '\\' && s[1] == 'x') {
+	    char in[3];
 	    char *end;
-	    long hex = strtol (s + 2, &end, 16);
-	    if (end == s + 4) {
+	    long hex;
+
+	    in[0] = s[2];
+	    in[1] = s[3];
+	    in[2] = '\0';
+	    hex = strtol (in, &end, 16);
+	    if (end == in + 2) {
 		*p++ = (char) hex;
 		s += 4;
 		continue;
