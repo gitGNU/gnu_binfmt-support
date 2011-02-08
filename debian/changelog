@@ -1,3 +1,9 @@
+binfmt-support (2.0.2) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 08 Feb 2011 10:22:00 +0000
+
 binfmt-support (2.0.1) experimental; urgency=low
 
   * Add a --find option to print the list of interpreters for an executable.
