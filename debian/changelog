@@ -1,3 +1,9 @@
+binfmt-support (2.0.3) UNRELEASED; urgency=low
+
+  * Mark binfmt-support Multi-Arch: foreign.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 22 Feb 2011 12:25:08 +0000
+
 binfmt-support (2.0.2) unstable; urgency=low
 
   * Upload to unstable.
