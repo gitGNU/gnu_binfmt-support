@@ -25,7 +25,8 @@ ALL_TESTS = \
 	import \
 	display \
 	enable \
-	detectors
+	detectors \
+	find
 if !CROSS_COMPILING
 TESTS = $(ALL_TESTS)
 endif

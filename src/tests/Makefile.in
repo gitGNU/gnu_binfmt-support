@@ -716,7 +716,8 @@ ALL_TESTS = \
 	import \
 	display \
 	enable \
-	detectors
+	detectors \
+	find
 
 @CROSS_COMPILING_FALSE@TESTS = $(ALL_TESTS)
 dist_check_SCRIPTS = binfmt_misc.py testlib.sh $(ALL_TESTS)
