@@ -35,6 +35,14 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifdef __linux__
+# include <sys/vfs.h>
+
+# ifndef FUSE_SUPER_MAGIC
+#  define FUSE_SUPER_MAGIC 0x65735546
+# endif /* FUSE_SUPER_MAGIC */
+#endif /* __linux__ */
+
 #include <pipeline.h>
 
 #include "argp.h"
@@ -272,8 +280,22 @@ static int unload_binfmt_misc (void)
     }
 
     if (style == BINFMT_FILESYSTEM) {
-	pipeline *umount = pipeline_new_command_args
-	    ("/bin/umount", procdir, NULL);
+#ifdef __linux__
+	struct statfs stfs;
+#endif /* __linux__ */
+	pipeline *umount;
+
+#ifdef __linux__
+	if (statfs (procdir, &stfs) == 0 && stfs.f_type == FUSE_SUPER_MAGIC) {
+	    /* Probably running within test suite.  Try fusermount -u. */
+	    umount = pipeline_new_command_args
+		("fusermount", "-u", procdir, NULL);
+	    if (!pipeline_run (umount))
+		return 1;
+	}
+#endif /* __linux__ */
+
+	umount = pipeline_new_command_args ("/bin/umount", procdir, NULL);
 	if (pipeline_run (umount)) {
 	    warning ("Couldn't unmount the binfmt_misc filesystem from %s.",
 		     procdir);

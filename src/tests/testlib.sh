@@ -6,7 +6,7 @@ failures=0
 FAKE_PROC=false
 cleanup () {
 	if $FAKE_PROC && [ -e "$tmpdir/proc/register" ]; then
-		umount "$tmpdir/proc"
+		fusermount -u "$tmpdir/proc"
 	fi
 	rm -rf "$tmpdir"
 }
