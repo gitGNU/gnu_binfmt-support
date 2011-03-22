@@ -1,9 +1,9 @@
-binfmt-support (2.0.4) UNRELEASED; urgency=low
+binfmt-support (2.0.4) unstable; urgency=low
 
   * Add a basic test for --find.
   * Use 'fusermount -u' rather than umount when running tests.
 
- -- Colin Watson <cjwatson@debian.org>  Fri, 25 Feb 2011 16:09:38 +0000
+ -- Colin Watson <cjwatson@debian.org>  Tue, 22 Mar 2011 10:39:11 +0000
 
 binfmt-support (2.0.3) unstable; urgency=low
 
