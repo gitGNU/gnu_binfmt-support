@@ -19,7 +19,6 @@ gnulib/lib/getopt.h
 gnulib/lib/stdio.h
 gnulib/lib/stdlib.h
 gnulib/lib/string.h
-gnulib/lib/strings.h
 gnulib/lib/sys
 gnulib/lib/time.h
 gnulib/lib/unistd.h
