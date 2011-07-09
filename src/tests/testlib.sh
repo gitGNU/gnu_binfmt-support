@@ -26,6 +26,7 @@ fake_proc () {
 	else
 		if ! "$srcdir/binfmt_misc.py" "$tmpdir/proc" 2>/dev/null; then
 			echo "SKIP: fuse unavailable"
+			cleanup
 			exit 77
 		fi
 	fi
