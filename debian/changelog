@@ -1,11 +1,11 @@
-binfmt-support (2.0.5) UNRELEASED; urgency=low
+binfmt-support (2.0.5) unstable; urgency=low
 
   * Update Vcs-Bzr field for Alioth changes.
   * Add an Upstart job, installed only on Ubuntu-derived distributions.
   * Upgrade to Autoconf 2.68 and Gnulib 20110609-stable.
   * Remove temporary test directory when skipping a test.
 
- -- Colin Watson <cjwatson@debian.org>  Mon, 30 May 2011 09:58:30 +0100
+ -- Colin Watson <cjwatson@debian.org>  Sun, 10 Jul 2011 01:15:31 +0100
 
 binfmt-support (2.0.4) unstable; urgency=low
 
