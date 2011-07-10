@@ -8,5 +8,12 @@ dtmp = $(CURDIR)/debian/binfmt-support
 %:
 	dh $@ --builddirectory=debian/build
 
+# Slightly peculiar trick to allow installing the Upstart job only on some
+# distributions without having to change its name or play tricks with
+# symlinks.
+ifeq (yes,$(shell dpkg-vendor --derives-from Ubuntu && echo yes))
+  INITNAME := --name=binfmt-support
+endif
+
 override_dh_installinit:
-	dh_installinit --error-handler=true -- start 90 2 3 4 5 .
+	dh_installinit $(INITNAME) --error-handler=true -- start 90 2 3 4 5 .
