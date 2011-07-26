@@ -20,7 +20,7 @@ dnl Process this file with autoconf to produce a configure script.
 # USA.
 
 # Initialise and check we're in the correct directory.
-AC_INIT([binfmt-support], [2.0.5], [cjwatson@debian.org])
+AC_INIT([binfmt-support], [2.0.6], [cjwatson@debian.org])
 AC_CONFIG_AUX_DIR([tools])
 AM_INIT_AUTOMAKE([1.10 -Wall -Werror foreign])
 AM_MAINTAINER_MODE
