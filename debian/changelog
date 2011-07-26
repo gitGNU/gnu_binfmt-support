@@ -1,8 +1,8 @@
-binfmt-support (2.0.6) UNRELEASED; urgency=low
+binfmt-support (2.0.6) unstable; urgency=low
 
   * Remove /var/lib/binfmts on purge (closes: #635449).
 
- -- Colin Watson <cjwatson@debian.org>  Tue, 26 Jul 2011 09:39:47 +0100
+ -- Colin Watson <cjwatson@debian.org>  Tue, 26 Jul 2011 09:41:55 +0100
 
 binfmt-support (2.0.5) unstable; urgency=low
 
