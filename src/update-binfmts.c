@@ -739,10 +739,14 @@ static int act_display (const char *name)
 	const char *package;
 
 	procdir_name = xasprintf ("%s/%s", procdir, name);
-	printf ("%s (%s):\n",
-		name, exists (procdir_name) ? "enabled" : "disabled");
 	load_format (name, 0);
 	binfmt = kvhash_lookup (formats, name);
+	if (!binfmt) {
+	    warning ("%s not in database of installed binary formats.", name);
+	    return 0;
+	}
+	printf ("%s (%s):\n",
+		name, exists (procdir_name) ? "enabled" : "disabled");
 	package = (!strcmp (binfmt->package, ":"))
 		  ? "<local>" : binfmt->package;
 	printf ("\

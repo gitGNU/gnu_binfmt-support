@@ -81,4 +81,7 @@ EOF
 expect_pass 'extension with package: display OK' \
 	    'update_binfmts_proc --display test-extension | diff -u - "$tmpdir/2-display.exp"'
 
+expect_pass 'nonexistent entry: display exit code OK' \
+	    'update_binfmts_proc --display nonexistent 2>/dev/null; test "$?" = 2'
+
 finish
