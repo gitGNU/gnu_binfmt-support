@@ -1,3 +1,9 @@
+binfmt-support (2.0.7) UNRELEASED; urgency=low
+
+  * Fix display tests to actually test the output of --display.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 29 Sep 2011 12:03:47 +0100
+
 binfmt-support (2.0.6) unstable; urgency=low
 
   * Remove /var/lib/binfmts on purge (closes: #635449).

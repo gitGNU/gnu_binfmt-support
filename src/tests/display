@@ -65,7 +65,8 @@ test-magic (enabled):
  interpreter = /bin/sh
     detector = 
 EOF
-expect_pass 'magic: display OK'
+expect_pass 'magic: display OK' \
+	    'update_binfmts_proc --display test-magic | diff -u - "$tmpdir/1-display.exp"'
 
 cat >"$tmpdir/2-display.exp" <<'EOF'
 test-extension (enabled):
@@ -77,6 +78,7 @@ test-extension (enabled):
  interpreter = /bin/sh
     detector = 
 EOF
-expect_pass 'extension with package: display OK'
+expect_pass 'extension with package: display OK' \
+	    'update_binfmts_proc --display test-extension | diff -u - "$tmpdir/2-display.exp"'
 
 finish
