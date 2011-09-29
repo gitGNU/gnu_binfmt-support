@@ -3,7 +3,7 @@ binfmt-support (2.0.7) UNRELEASED; urgency=low
   * Fix display tests to actually test the output of --display.
   * Upgrade to Gnulib 20110908-stable.
   * Display a useful error message rather than crashing if asked to display
-    a non-existent binary format (closes: #643756).
+    a non-existent binary format (closes: #643756, LP: #792601).
 
  -- Colin Watson <cjwatson@debian.org>  Thu, 29 Sep 2011 12:03:47 +0100
 
