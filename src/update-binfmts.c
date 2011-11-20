@@ -97,10 +97,13 @@ static void check_supported_os (void)
     uname (&uts);
     if (!strcmp (uts.sysname, "Linux"))
 	return;
-    fprintf (stderr, "Sorry, update-binfmts currently only works on Linux.\n");
-    if (!strcmp (uts.sysname, "GNU"))
-	fprintf (stderr, "Patches for Hurd support are welcomed; they should "
-			 "not be difficult.\n");
+    if (isatty (STDERR_FILENO)) {
+	fprintf (stderr, "Sorry, update-binfmts currently only works on "
+			 "Linux.\n");
+	if (!strcmp (uts.sysname, "GNU"))
+	    fprintf (stderr, "Patches for Hurd support are welcomed; they "
+			     "should not be difficult.\n");
+    }
     exit (0);
 }
 

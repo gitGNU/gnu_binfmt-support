@@ -1,3 +1,11 @@
+binfmt-support (2.0.8) UNRELEASED; urgency=low
+
+  * Only print informational messages on non-Linux systems if stderr is a
+    terminal.  This allows saving a couple of processes from the Upstart
+    job.
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 20 Nov 2011 14:04:57 +0000
+
 binfmt-support (2.0.7) unstable; urgency=low
 
   * Fix display tests to actually test the output of --display.

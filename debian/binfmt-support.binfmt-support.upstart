@@ -10,7 +10,4 @@ start on filesystem
 
 task
 
-script
-    [ "$(uname)" = Linux ] || exit 0
-    exec update-binfmts --enable
-end script
+exec update-binfmts --enable
