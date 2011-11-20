@@ -21,7 +21,7 @@
 SUBDIRS = tests
 
 sbin_PROGRAMS = update-binfmts
-pkglib_PROGRAMS = run-detectors
+pkglibexec_PROGRAMS = run-detectors
 
 AM_CPPFLAGS = \
 	-I$(top_builddir)/gnulib/lib \
