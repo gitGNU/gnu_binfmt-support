@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/python
 # binfmt_misc filesystem emulator using FUSE.
 
 # Copyright (C) 2010 Colin Watson.
@@ -79,15 +79,15 @@ class BinfmtMisc(fuse.Fuse):
         st.st_ctime = 0
 
         if path == '/':
-            st.st_mode = stat.S_IFDIR | 0755
+            st.st_mode = stat.S_IFDIR | 0o755
             st.st_nlink = 2
             return st
         else:
-            st.st_mode = stat.S_IFREG | 0644
+            st.st_mode = stat.S_IFREG | 0o644
             st.st_nlink = 1
 
         if path == '/register':
-            st.st_mode = (st.st_mode & ~0777) | 0200
+            st.st_mode = (st.st_mode & ~0o777) | 0o200
             return st
         elif path == '/status':
             return st
@@ -100,10 +100,10 @@ class BinfmtMisc(fuse.Fuse):
 
     def readdir(self, path, offset):
         if path != '/':
-            raise OSError, (errno.ENOENT, "readdir only works on /", path)
+            raise OSError(errno.ENOENT, "readdir only works on /", path)
 
         dirents = ['.', '..']
-        dirents.extend(self.names.keys())
+        dirents.extend(list(self.names))
         dirents.extend(('register', 'status'))
         for dirent in dirents:
             yield fuse.Direntry(dirent)
