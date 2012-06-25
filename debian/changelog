@@ -1,4 +1,4 @@
-binfmt-support (2.0.9) UNRELEASED; urgency=low
+binfmt-support (2.0.9) unstable; urgency=low
 
   * Make src/tests/binfmt_misc.py compatible with Python 3.
   * Build with V=1 so that tools such as blhc can scan more effectively for
@@ -7,7 +7,7 @@ binfmt-support (2.0.9) UNRELEASED; urgency=low
   * Upgrade to Autoconf 2.69, Automake 1.11.5, and Gnulib 20120404-stable.
     gnulib/lib/argp-parse.patch is no longer needed.
 
- -- Colin Watson <cjwatson@debian.org>  Mon, 18 Jun 2012 05:09:38 +0100
+ -- Colin Watson <cjwatson@debian.org>  Tue, 26 Jun 2012 00:22:20 +0100
 
 binfmt-support (2.0.8) unstable; urgency=low
 
