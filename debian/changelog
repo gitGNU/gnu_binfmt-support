@@ -1,6 +1,8 @@
 binfmt-support (2.0.9) UNRELEASED; urgency=low
 
   * Make src/tests/binfmt_misc.py compatible with Python 3.
+  * Build with V=1 so that tools such as blhc can scan more effectively for
+    missing build flags.
 
  -- Colin Watson <cjwatson@debian.org>  Mon, 18 Jun 2012 05:09:38 +0100
 

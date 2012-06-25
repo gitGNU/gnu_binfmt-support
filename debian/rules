@@ -5,6 +5,8 @@ version = $(shell dpkg-parsechangelog | \
 
 dtmp = $(CURDIR)/debian/binfmt-support
 
+export V := 1
+
 %:
 	dh $@ --builddirectory=debian/build
 
