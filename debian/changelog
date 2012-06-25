@@ -4,6 +4,8 @@ binfmt-support (2.0.9) UNRELEASED; urgency=low
   * Build with V=1 so that tools such as blhc can scan more effectively for
     missing build flags.
   * Convert debian/copyright to copyright-format 1.0.
+  * Upgrade to Autoconf 2.69, Automake 1.11.5, and Gnulib 20120404-stable.
+    gnulib/lib/argp-parse.patch is no longer needed.
 
  -- Colin Watson <cjwatson@debian.org>  Mon, 18 Jun 2012 05:09:38 +0100
 
