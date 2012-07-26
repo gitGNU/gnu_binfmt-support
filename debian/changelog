@@ -1,3 +1,12 @@
+binfmt-support (2.0.10) UNRELEASED; urgency=low
+
+  * If a binary format is already enabled according to the kernel, which can
+    happen in chroots if it was installed in the host system, then continue
+    as gracefully as we can manage rather than exiting non-zero (closes:
+    #680349).
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 26 Jul 2012 13:35:27 +0100
+
 binfmt-support (2.0.9) unstable; urgency=low
 
   * Make src/tests/binfmt_misc.py compatible with Python 3.

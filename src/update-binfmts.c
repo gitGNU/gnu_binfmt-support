@@ -351,6 +351,8 @@ static void load_all_formats (int quiet)
 /* Enable a binary format in the kernel. */
 static int act_enable (const char *name)
 {
+    char *procdir_name;
+
     if (!load_binfmt_misc ())
 	return 1;
 
@@ -361,6 +363,21 @@ static int act_enable (const char *name)
 	const char *interpreter;
 	const char *flags;
 	char *regstring;
+
+	procdir_name = xasprintf ("%s/%s", procdir, name);
+	if (exists (procdir_name)) {
+	    /* This can happen in chroots, since /proc/sys/fs/binfmt_misc is
+	     * shared between all chroots.  The real fix for this is to give
+	     * the binfmt_misc filesystem per-chroot (or per-mount) state,
+	     * since at the moment there will be leakage of enabled binary
+	     * formats between chroots.  However, for now, we just
+	     * gracefully bail out if the format is already enabled.
+	     */
+	    warning ("%s already enabled in kernel.", name);
+	    free (procdir_name);
+	    return 1;
+	}
+	free (procdir_name);
 
 	load_format (name, 0);
 	if (!test && !kvhash_exists (formats, name)) {
@@ -424,8 +441,6 @@ static int act_enable (const char *name)
 
 	load_all_formats (0);
 	HASH_FOR_EACH (format_iter, formats) {
-	    char *procdir_name;
-
 	    procdir_name = xasprintf ("%s/%s", procdir, format_iter->key);
 	    if (!exists (procdir_name))
 		worked &= act_enable (format_iter->key);
