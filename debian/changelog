@@ -4,6 +4,7 @@ binfmt-support (2.0.10) UNRELEASED; urgency=low
     happen in chroots if it was installed in the host system, then continue
     as gracefully as we can manage rather than exiting non-zero (closes:
     #680349).
+  * Upgrade to Automake 1.11.6.
 
  -- Colin Watson <cjwatson@debian.org>  Thu, 26 Jul 2012 13:35:27 +0100
 
