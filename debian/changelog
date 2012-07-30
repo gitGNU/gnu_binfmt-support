@@ -1,4 +1,4 @@
-binfmt-support (2.0.10) UNRELEASED; urgency=low
+binfmt-support (2.0.10) unstable; urgency=low
 
   * If a binary format is already enabled according to the kernel, which can
     happen in chroots if it was installed in the host system, then continue
@@ -6,7 +6,7 @@ binfmt-support (2.0.10) UNRELEASED; urgency=low
     #680349).
   * Upgrade to Automake 1.11.6.
 
- -- Colin Watson <cjwatson@debian.org>  Thu, 26 Jul 2012 13:35:27 +0100
+ -- Colin Watson <cjwatson@debian.org>  Mon, 30 Jul 2012 10:36:59 +0100
 
 binfmt-support (2.0.9) unstable; urgency=low
 
