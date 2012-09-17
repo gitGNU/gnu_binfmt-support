@@ -1,9 +1,9 @@
-binfmt-support (2.0.11) UNRELEASED; urgency=low
+binfmt-support (2.0.11) unstable; urgency=low
 
   * Backport Gnulib commit 66712c23388e93e5c518ebc8515140fa0c807348 to stop
     assuming gets.
 
- -- Colin Watson <cjwatson@debian.org>  Tue, 18 Sep 2012 00:03:37 +0100
+ -- Colin Watson <cjwatson@debian.org>  Tue, 18 Sep 2012 00:05:32 +0100
 
 binfmt-support (2.0.10) unstable; urgency=low
 
