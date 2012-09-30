@@ -43,7 +43,8 @@ update_binfmts_proc () {
 }
 
 run_detectors () {
-	$RUN_DETECTORS --admindir "$tmpdir/var/lib/binfmts" "$@"
+	$RUN_DETECTORS --admindir "$tmpdir/var/lib/binfmts" \
+		       --procdir "$tmpdir/proc" "$@"
 }
 
 expect_pass () {

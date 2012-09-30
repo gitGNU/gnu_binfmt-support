@@ -18,4 +18,12 @@ expect_pass 'magic: run find' \
 expect_pass 'magic: find result OK' \
 	    'diff -u "$tmpdir/1.out" "$tmpdir/1.exp"'
 
+expect_pass 'magic: disable' \
+	    'update_binfmts_proc --disable test'
+touch "$tmpdir/2.exp"
+expect_pass 'magic: run find (disabled)' \
+	    'update_binfmts_proc --find "$tmpdir/program.ext" >"$tmpdir/2.out"'
+expect_pass 'magic: find result OK' \
+	    'diff -u "$tmpdir/2.out" "$tmpdir/2.exp"'
+
 finish

@@ -26,7 +26,9 @@
 #include <string.h>
 #include <dirent.h>
 #include <assert.h>
+#include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #include <pipeline.h>
 
@@ -83,12 +85,19 @@ static void load_all_formats (gl_list_t *formats)
 	quit_err ("unable to open %s", admindir);
     *formats = gl_list_create_empty (GL_ARRAY_LIST, NULL, NULL, NULL, true);
     while ((entry = readdir (dir)) != NULL) {
-	char *admindir_name;
+	char *admindir_name, *procdir_name;
+	struct stat st;
 	struct binfmt *binfmt;
 	size_t mask_size;
 
 	if (!strcmp (entry->d_name, ".") || !strcmp (entry->d_name, ".."))
 	    continue;
+	procdir_name = xasprintf ("%s/%s", procdir, entry->d_name);
+	if (stat (procdir_name, &st) == -1) {
+	    free (procdir_name);
+	    continue;
+	}
+	free (procdir_name);
 	admindir_name = xasprintf ("%s/%s", admindir, entry->d_name);
 	binfmt = binfmt_load (entry->d_name, admindir_name, 0);
 	free (admindir_name);

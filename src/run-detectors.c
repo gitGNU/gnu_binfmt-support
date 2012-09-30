@@ -39,12 +39,16 @@ const char *argp_program_version = "binfmt-support " PACKAGE_VERSION;
 const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 
 enum opts {
-    OPT_ADMINDIR = 256
+    OPT_ADMINDIR = 256,
+    OPT_PROCDIR
 };
 
 static struct argp_option options[] = {
     { "admindir",	OPT_ADMINDIR,	"DIRECTORY",	0,
 	"administration directory (default: /var/lib/binfmts)" },
+    { "procdir",	OPT_PROCDIR,	"DIRECTORY",	OPTION_HIDDEN,
+	"proc directory, for test suite use only "
+	"(default: /proc/sys/fs/binfmt_misc)", 5 },
     { 0 }
 };
 
@@ -53,6 +57,10 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
     switch (key) {
 	case OPT_ADMINDIR:
 	    admindir = arg;
+	    return 0;
+
+	case OPT_PROCDIR:
+	    procdir = arg;
 	    return 0;
     }
 
