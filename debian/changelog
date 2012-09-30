@@ -1,9 +1,9 @@
-binfmt-support (2.0.12) UNRELEASED; urgency=low
+binfmt-support (2.0.12) unstable; urgency=low
 
   * Fix ineffective --find test.
   * Don't show disabled formats in --find output (closes: #689247).
 
- -- Colin Watson <cjwatson@debian.org>  Sun, 30 Sep 2012 21:51:16 +0100
+ -- Colin Watson <cjwatson@debian.org>  Sun, 30 Sep 2012 22:25:11 +0100
 
 binfmt-support (2.0.11) unstable; urgency=low
 
