@@ -15,6 +15,7 @@ chmod +x "$tmpdir/program.ext"
 echo /bin/sh >"$tmpdir/1.exp"
 expect_pass 'magic: run find' \
 	    'update_binfmts_proc --find "$tmpdir/program.ext" >"$tmpdir/1.out"'
-expect_pass 'diff -u "$tmpdir/1.out" "$tmpdir/1.exp"'
+expect_pass 'magic: find result OK' \
+	    'diff -u "$tmpdir/1.out" "$tmpdir/1.exp"'
 
 finish

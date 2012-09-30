@@ -1,3 +1,9 @@
+binfmt-support (2.0.12) UNRELEASED; urgency=low
+
+  * Fix ineffective --find test.
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 30 Sep 2012 21:51:16 +0100
+
 binfmt-support (2.0.11) unstable; urgency=low
 
   * Backport Gnulib commit 66712c23388e93e5c518ebc8515140fa0c807348 to stop
