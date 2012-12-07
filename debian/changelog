@@ -1,3 +1,11 @@
+binfmt-support (2.0.13) UNRELEASED; urgency=low
+
+  * Drop python build-dependency; fuse is hardly ever available in
+    autobuilding environments anyway, so it's ineffective.  The test suite
+    is still useful for manual testing.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 07 Dec 2012 13:22:07 +0000
+
 binfmt-support (2.0.12) unstable; urgency=low
 
   * Fix ineffective --find test.
