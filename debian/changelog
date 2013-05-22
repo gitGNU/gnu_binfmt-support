@@ -1,9 +1,9 @@
-binfmt-support (2.0.14) UNRELEASED; urgency=low
+binfmt-support (2.0.14) unstable; urgency=low
 
   * Install Upstart job on Debian as well, following new recommendations in
     https://wiki.ubuntu.com/UpstartCompatibleInitScripts.
 
- -- Colin Watson <cjwatson@debian.org>  Wed, 22 May 2013 09:13:49 +0100
+ -- Colin Watson <cjwatson@debian.org>  Wed, 22 May 2013 09:23:42 +0100
 
 binfmt-support (2.0.13) unstable; urgency=low
 
