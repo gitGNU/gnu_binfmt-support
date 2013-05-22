@@ -28,6 +28,9 @@ CODE=0
 
 case "$1" in
   start)
+    if init_is_upstart; then
+      exit 1
+    fi
     log_daemon_msg "Enabling $DESC" "$NAME"
     update-binfmts --enable || CODE=$?
     log_end_msg $CODE
@@ -35,6 +38,9 @@ case "$1" in
     ;;
 
   stop)
+    if init_is_upstart; then
+      exit 0
+    fi
     log_daemon_msg "Disabling $DESC" "$NAME"
     update-binfmts --disable || CODE=$?
     log_end_msg $CODE
@@ -42,6 +48,9 @@ case "$1" in
     ;;
 
   restart|force-reload)
+    if init_is_upstart; then
+      exit 1
+    fi
     $0 stop
     $0 start
     ;;
