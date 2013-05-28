@@ -1,3 +1,10 @@
+binfmt-support (2.0.15) UNRELEASED; urgency=low
+
+  * Build-depend on debhelper (>= 9~) directly rather than requiring a
+    Lintian override for use of 8.9.0.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 28 May 2013 18:13:30 +0100
+
 binfmt-support (2.0.14) unstable; urgency=low
 
   * Install Upstart job on Debian as well, following new recommendations in
