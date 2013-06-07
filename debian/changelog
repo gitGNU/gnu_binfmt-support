@@ -1,10 +1,10 @@
-binfmt-support (2.0.15) UNRELEASED; urgency=low
+binfmt-support (2.0.15) unstable; urgency=low
 
   * Build-depend on debhelper (>= 9~) directly rather than requiring a
     Lintian override for use of 8.9.0.
   * Upgrade to Automake 1.13.2 and autotools-dev 20130515.1.
 
- -- Colin Watson <cjwatson@debian.org>  Tue, 28 May 2013 18:13:30 +0100
+ -- Colin Watson <cjwatson@debian.org>  Fri, 07 Jun 2013 11:38:48 +0100
 
 binfmt-support (2.0.14) unstable; urgency=low
 
