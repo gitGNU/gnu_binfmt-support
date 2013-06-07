@@ -22,7 +22,7 @@ dnl Process this file with autoconf to produce a configure script.
 # Initialise and check we're in the correct directory.
 AC_INIT([binfmt-support], [2.0.8], [cjwatson@debian.org])
 AC_CONFIG_AUX_DIR([tools])
-AM_INIT_AUTOMAKE([1.10 -Wall -Werror foreign])
+AM_INIT_AUTOMAKE([1.11 -Wall -Werror foreign parallel-tests])
 AM_MAINTAINER_MODE
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_PREREQ([2.59])
