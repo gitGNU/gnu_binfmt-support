@@ -20,7 +20,9 @@ dnl Process this file with autoconf to produce a configure script.
 # USA.
 
 # Initialise and check we're in the correct directory.
-AC_INIT([binfmt-support], [2.0.8], [cjwatson@debian.org])
+AC_INIT([binfmt-support],
+	m4_esyscmd_s([head -n1 debian/changelog | sed -n 's/.*(\(.*\)).*/\1/p']),
+	[cjwatson@debian.org])
 AC_CONFIG_AUX_DIR([tools])
 AM_INIT_AUTOMAKE([1.11 -Wall -Werror foreign parallel-tests])
 AM_MAINTAINER_MODE
