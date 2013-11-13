@@ -1,11 +1,11 @@
-binfmt-support (2.0.16) UNRELEASED; urgency=low
+binfmt-support (2.0.16) unstable; urgency=low
 
   * Use dh-autoreconf to keep autotools output up to date, especially for
     new ports.
   * Upgrade to Automake 1.14 and Gnulib 20130805-stable.  gnulib/gets.patch
     is no longer needed.
 
- -- Colin Watson <cjwatson@ubuntu.com>  Wed, 13 Nov 2013 14:36:11 +0000
+ -- Colin Watson <cjwatson@debian.org>  Wed, 13 Nov 2013 16:04:25 +0000
 
 binfmt-support (2.0.15) unstable; urgency=low
 
