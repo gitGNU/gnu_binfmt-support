@@ -1,3 +1,10 @@
+binfmt-support (2.0.16) UNRELEASED; urgency=low
+
+  * Use dh-autoreconf to keep autotools output up to date, especially for
+    new ports.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Wed, 13 Nov 2013 14:36:11 +0000
+
 binfmt-support (2.0.15) unstable; urgency=low
 
   * Build-depend on debhelper (>= 9~) directly rather than requiring a
