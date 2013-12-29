@@ -30,3 +30,16 @@ EXTRA_DIST = \
 	gnulib/m4/gnulib-tool.m4
 
 ACLOCAL_AMFLAGS = -I gnulib/m4
+
+dist-hook: gen-ChangeLog
+
+gen_start_date = 2013-12-29
+.PHONY: gen-ChangeLog
+gen-ChangeLog:
+	$(AM_V_GEN)if test -d .git; then \
+		$(top_srcdir)/tools/gitlog-to-changelog \
+			--format='%s%n%n%b%n' \
+			--since="$(gen_start_date)" > $(distdir)/cl-t; \
+		rm -f $(distdir)/ChangeLog; \
+		mv $(distdir)/cl-t $(distdir)/ChangeLog; \
+	fi
