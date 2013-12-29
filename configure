@@ -18002,7 +18002,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile gnulib/lib/Makefile man/Makefile src/Makefile src/tests/Makefile"
+ac_config_files="$ac_config_files Makefile gnulib/lib/Makefile doc/Makefile man/Makefile src/Makefile src/tests/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -18818,6 +18818,7 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "gnulib/lib/Makefile") CONFIG_FILES="$CONFIG_FILES gnulib/lib/Makefile" ;;
+    "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/tests/Makefile") CONFIG_FILES="$CONFIG_FILES src/tests/Makefile" ;;
