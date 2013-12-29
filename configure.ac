@@ -65,6 +65,9 @@ AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" = xyes])
 AC_CONFIG_FILES([Makefile
 	gnulib/lib/Makefile
 	doc/Makefile
+	init/Makefile
+	init/sysvinit/Makefile
+	init/upstart/Makefile
 	man/Makefile
 	src/Makefile
 	src/tests/Makefile])

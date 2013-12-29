@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-## Copyright (C) 2010 Colin Watson.
+## Copyright (C) 2013 Colin Watson.
 ##
 ## This file is part of binfmt-support.
 ##
@@ -18,31 +18,4 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-SUBDIRS = gnulib/lib src doc man init
-
-EXTRA_DIST = \
-	.gitignore \
-	ChangeLog-2013 \
-	autogen.sh \
-	gnulib/m4/gnulib-cache.m4 \
-	gnulib/m4/gnulib-tool.m4
-
-# These macro files are imported by gnulib-tool, but at present not used.
-# We include them in the distribution anyway for maximum consistency.
-EXTRA_DIST += \
-	gnulib/m4/math_h.m4
-
-ACLOCAL_AMFLAGS = -I gnulib/m4
-
-dist-hook: gen-ChangeLog
-
-gen_start_date = 2013-12-29
-.PHONY: gen-ChangeLog
-gen-ChangeLog:
-	$(AM_V_GEN)if test -d .git; then \
-		$(top_srcdir)/tools/gitlog-to-changelog \
-			--format='%s%n%n%b%n' \
-			--since="$(gen_start_date)" > $(distdir)/cl-t; \
-		rm -f $(distdir)/ChangeLog; \
-		mv $(distdir)/cl-t $(distdir)/ChangeLog; \
-	fi
+SUBDIRS = sysvinit upstart
