@@ -1,5 +1,5 @@
-binfmt-support 2.1.1
-====================
+binfmt-support 2.1.1 (29 December 2013)
+=======================================
 
 Fix installation of systemd unit files.
 
