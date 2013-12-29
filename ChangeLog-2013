@@ -1,3 +1,7 @@
+Previous versions of binfmt-support were maintained solely as a Debian
+package.  The following is the complete changelog up to the point where
+binfmt-support gained its own upstream existence.
+
 binfmt-support (2.0.16) unstable; urgency=low
 
   * Use dh-autoreconf to keep autotools output up to date, especially for

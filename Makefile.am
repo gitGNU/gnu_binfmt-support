@@ -22,6 +22,7 @@ SUBDIRS = gnulib/lib src man
 
 EXTRA_DIST = \
 	.gitignore \
+	ChangeLog-2013 \
 	autogen.sh \
 	gnulib/gets.patch \
 	gnulib/lib/argp-parse.patch \
