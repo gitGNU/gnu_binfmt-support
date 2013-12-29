@@ -73,7 +73,6 @@ AC_CONFIG_FILES([Makefile
 	doc/Makefile
 	init/Makefile
 	init/systemd/Makefile
-	init/systemd/binfmt-support.service
 	init/sysvinit/Makefile
 	init/upstart/Makefile
 	man/Makefile

@@ -79,8 +79,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = init/systemd
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/binfmt-support.service.in
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/gnulib/m4/00gnulib.m4 \
 	$(top_srcdir)/gnulib/m4/alloca.m4 \
@@ -167,7 +166,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = binfmt-support.service
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -216,7 +215,7 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(systemdsystemunitdir)"
-DATA = $(systemdsystemunit_DATA)
+DATA = $(nodist_systemdsystemunit_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -939,7 +938,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@HAVE_SYSTEMD_TRUE@systemdsystemunit_DATA = binfmt-support.service
+EXTRA_DIST = binfmt-support.service.in
+CLEANFILES = binfmt-support.service
+@HAVE_SYSTEMD_TRUE@nodist_systemdsystemunit_DATA = binfmt-support.service
 all: all-am
 
 .SUFFIXES:
@@ -973,11 +974,9 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-binfmt-support.service: $(top_builddir)/config.status $(srcdir)/binfmt-support.service.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-install-systemdsystemunitDATA: $(systemdsystemunit_DATA)
+install-nodist_systemdsystemunitDATA: $(nodist_systemdsystemunit_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(systemdsystemunit_DATA)'; test -n "$(systemdsystemunitdir)" || list=; \
+	@list='$(nodist_systemdsystemunit_DATA)'; test -n "$(systemdsystemunitdir)" || list=; \
 	if test -n "$$list"; then \
 	  echo " $(MKDIR_P) '$(DESTDIR)$(systemdsystemunitdir)'"; \
 	  $(MKDIR_P) "$(DESTDIR)$(systemdsystemunitdir)" || exit 1; \
@@ -991,9 +990,9 @@ install-systemdsystemunitDATA: $(systemdsystemunit_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(systemdsystemunitdir)" || exit $$?; \
 	done
 
-uninstall-systemdsystemunitDATA:
+uninstall-nodist_systemdsystemunitDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(systemdsystemunit_DATA)'; test -n "$(systemdsystemunitdir)" || list=; \
+	@list='$(nodist_systemdsystemunit_DATA)'; test -n "$(systemdsystemunitdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(systemdsystemunitdir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
@@ -1062,6 +1061,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -1090,7 +1090,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-systemdsystemunitDATA
+install-data-am: install-nodist_systemdsystemunitDATA
 
 install-dvi: install-dvi-am
 
@@ -1134,7 +1134,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-systemdsystemunitDATA
+uninstall-am: uninstall-nodist_systemdsystemunitDATA
 
 .MAKE: install-am install-strip
 
@@ -1143,13 +1143,17 @@ uninstall-am: uninstall-systemdsystemunitDATA
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip \
-	install-systemdsystemunitDATA installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags-am \
-	uninstall uninstall-am uninstall-systemdsystemunitDATA
+	install-info-am install-man \
+	install-nodist_systemdsystemunitDATA install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags-am uninstall uninstall-am \
+	uninstall-nodist_systemdsystemunitDATA
 
+
+@HAVE_SYSTEMD_TRUE@binfmt-support.service: binfmt-support.service.in
+@HAVE_SYSTEMD_TRUE@	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

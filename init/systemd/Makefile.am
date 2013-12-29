@@ -18,6 +18,13 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
+EXTRA_DIST = binfmt-support.service.in
+
+CLEANFILES = binfmt-support.service
+
 if HAVE_SYSTEMD
-systemdsystemunit_DATA = binfmt-support.service
+nodist_systemdsystemunit_DATA = binfmt-support.service
+
+binfmt-support.service: binfmt-support.service.in
+	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
 endif
