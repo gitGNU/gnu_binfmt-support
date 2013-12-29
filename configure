@@ -6923,6 +6923,7 @@ esac
   # Code from module getopt-posix:
   # Code from module gettext-h:
   # Code from module gitlog-to-changelog:
+  # Code from module gnupload:
   # Code from module hash:
   # Code from module include_next:
   # Code from module intprops:

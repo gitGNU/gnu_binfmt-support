@@ -61,6 +61,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module getopt-posix:
   # Code from module gettext-h:
   # Code from module gitlog-to-changelog:
+  # Code from module gnupload:
   # Code from module hash:
   # Code from module include_next:
   # Code from module intprops:
@@ -505,6 +506,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/gitlog-to-changelog
+  build-aux/gnupload
   build-aux/snippet/_Noreturn.h
   build-aux/snippet/arg-nonnull.h
   build-aux/snippet/c++defs.h
