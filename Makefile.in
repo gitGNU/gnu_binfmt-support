@@ -80,9 +80,10 @@ host_triplet = @host@
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in COPYING tools/compile tools/config.guess \
-	tools/config.sub tools/depcomp tools/install-sh tools/missing \
-	$(top_srcdir)/tools/compile $(top_srcdir)/tools/config.guess \
+	$(srcdir)/config.h.in COPYING NEWS tools/compile \
+	tools/config.guess tools/config.sub tools/depcomp \
+	tools/install-sh tools/missing $(top_srcdir)/tools/compile \
+	$(top_srcdir)/tools/config.guess \
 	$(top_srcdir)/tools/config.sub $(top_srcdir)/tools/install-sh \
 	$(top_srcdir)/tools/missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
