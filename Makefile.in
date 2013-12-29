@@ -1003,7 +1003,7 @@ EXTRA_DIST = .gitignore ChangeLog-2013 autogen.sh \
 	gnulib/m4/gnulib-cache.m4 gnulib/m4/gnulib-tool.m4 \
 	gnulib/m4/math_h.m4
 ACLOCAL_AMFLAGS = -I gnulib/m4
-gen_start_date = 2013-12-29
+gen_start_date = 2013-12-28
 DISTCHECK_CONFIGURE_FLAGS = \
 	--with-systemdsystemunitdir=\$${prefix}/$(systemdsystemunitdir)
 
