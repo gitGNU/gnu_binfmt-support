@@ -46,3 +46,6 @@ gen-ChangeLog:
 		rm -f $(distdir)/ChangeLog; \
 		mv $(distdir)/cl-t $(distdir)/ChangeLog; \
 	fi
+
+DISTCHECK_CONFIGURE_FLAGS = \
+	--with-systemdsystemunitdir=\$${prefix}/$(systemdsystemunitdir)

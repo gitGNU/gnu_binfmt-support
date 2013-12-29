@@ -7,6 +7,7 @@
 /config.status
 /config.status.lineno
 /stamp-h*
+doc/Makefile
 gnulib/lib/Makefile
 gnulib/lib/alloca.h
 gnulib/lib/arg-nonnull.h
@@ -22,6 +23,11 @@ gnulib/lib/time.h
 gnulib/lib/unistd.h
 gnulib/lib/warn-on-use.h
 gnulib/lib/wchar.h
+init/Makefile
+init/systemd/Makefile
+init/systemd/binfmt-support.service
+init/sysvinit/Makefile
+init/upstart/Makefile
 man/Makefile
 src/Makefile
 src/run-detectors

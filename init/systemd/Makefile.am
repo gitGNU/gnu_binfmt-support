@@ -18,4 +18,6 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-SUBDIRS = systemd sysvinit upstart
+if HAVE_SYSTEMD
+systemdsystemunit_DATA = binfmt-support.service
+endif

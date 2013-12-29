@@ -59,6 +59,12 @@ AC_TYPE_SIZE_T
 
 PKG_CHECK_MODULES([libpipeline], [libpipeline])
 
+AC_ARG_WITH([systemdsystemunitdir],
+	    AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files]),
+	    [], [systemdsystemunitdir="$($PKG_CONFIG --variable=systemdsystemunitdir systemd)"])
+AC_SUBST([systemdsystemunitdir])
+AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$systemdsystemunitdir" != x])
+
 # If we're cross-compiling, tests won't work.
 AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" = xyes])
 
@@ -66,6 +72,8 @@ AC_CONFIG_FILES([Makefile
 	gnulib/lib/Makefile
 	doc/Makefile
 	init/Makefile
+	init/systemd/Makefile
+	init/systemd/binfmt-support.service
 	init/sysvinit/Makefile
 	init/upstart/Makefile
 	man/Makefile

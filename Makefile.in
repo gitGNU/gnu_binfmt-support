@@ -990,6 +990,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
+systemdsystemunitdir = @systemdsystemunitdir@
 target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
@@ -1003,6 +1004,9 @@ EXTRA_DIST = .gitignore ChangeLog-2013 autogen.sh \
 	gnulib/m4/math_h.m4
 ACLOCAL_AMFLAGS = -I gnulib/m4
 gen_start_date = 2013-12-29
+DISTCHECK_CONFIGURE_FLAGS = \
+	--with-systemdsystemunitdir=\$${prefix}/$(systemdsystemunitdir)
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

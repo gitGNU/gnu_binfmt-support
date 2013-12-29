@@ -636,6 +636,9 @@ LTLIBOBJS
 LIBOBJS
 CROSS_COMPILING_FALSE
 CROSS_COMPILING_TRUE
+HAVE_SYSTEMD_FALSE
+HAVE_SYSTEMD_TRUE
+systemdsystemunitdir
 libpipeline_LIBS
 libpipeline_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -1378,6 +1381,7 @@ enable_silent_rules
 enable_maintainer_mode
 enable_dependency_tracking
 enable_largefile
+with_systemdsystemunitdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -2021,6 +2025,12 @@ Optional Features:
   --disable-dependency-tracking
                           speeds up one-time build
   --disable-largefile     omit support for large files
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-systemdsystemunitdir=DIR
+                          Directory for systemd service files
 
 Some influential environment variables:
   CC          C compiler command
@@ -17993,6 +18003,24 @@ $as_echo "yes" >&6; }
 
 fi
 
+
+# Check whether --with-systemdsystemunitdir was given.
+if test "${with_systemdsystemunitdir+set}" = set; then :
+  withval=$with_systemdsystemunitdir;
+else
+  systemdsystemunitdir="$($PKG_CONFIG --variable=systemdsystemunitdir systemd)"
+fi
+
+
+ if test "x$systemdsystemunitdir" != x; then
+  HAVE_SYSTEMD_TRUE=
+  HAVE_SYSTEMD_FALSE='#'
+else
+  HAVE_SYSTEMD_TRUE='#'
+  HAVE_SYSTEMD_FALSE=
+fi
+
+
 # If we're cross-compiling, tests won't work.
  if test "x$cross_compiling" = xyes; then
   CROSS_COMPILING_TRUE=
@@ -18003,7 +18031,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile gnulib/lib/Makefile doc/Makefile init/Makefile init/sysvinit/Makefile init/upstart/Makefile man/Makefile src/Makefile src/tests/Makefile"
+ac_config_files="$ac_config_files Makefile gnulib/lib/Makefile doc/Makefile init/Makefile init/systemd/Makefile init/systemd/binfmt-support.service init/sysvinit/Makefile init/upstart/Makefile man/Makefile src/Makefile src/tests/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -18219,6 +18247,10 @@ fi
     gltests_LTLIBOBJS=$gltests_ltlibobjs
 
 
+if test -z "${HAVE_SYSTEMD_TRUE}" && test -z "${HAVE_SYSTEMD_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_SYSTEMD\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${CROSS_COMPILING_TRUE}" && test -z "${CROSS_COMPILING_FALSE}"; then
   as_fn_error $? "conditional \"CROSS_COMPILING\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -18821,6 +18853,8 @@ do
     "gnulib/lib/Makefile") CONFIG_FILES="$CONFIG_FILES gnulib/lib/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "init/Makefile") CONFIG_FILES="$CONFIG_FILES init/Makefile" ;;
+    "init/systemd/Makefile") CONFIG_FILES="$CONFIG_FILES init/systemd/Makefile" ;;
+    "init/systemd/binfmt-support.service") CONFIG_FILES="$CONFIG_FILES init/systemd/binfmt-support.service" ;;
     "init/sysvinit/Makefile") CONFIG_FILES="$CONFIG_FILES init/sysvinit/Makefile" ;;
     "init/upstart/Makefile") CONFIG_FILES="$CONFIG_FILES init/upstart/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
