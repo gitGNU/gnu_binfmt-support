@@ -18008,11 +18008,12 @@ fi
 if test "${with_systemdsystemunitdir+set}" = set; then :
   withval=$with_systemdsystemunitdir;
 else
-  systemdsystemunitdir="$($PKG_CONFIG --variable=systemdsystemunitdir systemd)"
+  with_systemdsystemunitdir="$($PKG_CONFIG --variable=systemdsystemunitdir systemd)"
 fi
 
+systemdsystemunitdir=$with_systemdsystemunitdir
 
- if test "x$systemdsystemunitdir" != x; then
+ if test "x$with_systemdsystemunitdir" != x; then
   HAVE_SYSTEMD_TRUE=
   HAVE_SYSTEMD_FALSE='#'
 else
