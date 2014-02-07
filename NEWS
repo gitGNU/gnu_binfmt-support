@@ -1,5 +1,5 @@
-binfmt-support 2.1.2
-====================
+binfmt-support 2.1.2 (7 February 2014)
+======================================
 
 Stop hardcoding Debian defaults for various directories.
 
