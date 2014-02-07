@@ -26,6 +26,8 @@ gnulib/lib/unistd.h
 gnulib/lib/warn-on-use.h
 gnulib/lib/wchar.h
 init/Makefile
+init/openrc/Makefile
+init/openrc/binfmt-support
 init/systemd/Makefile
 init/systemd/binfmt-support.service
 init/sysvinit/Makefile

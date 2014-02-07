@@ -77,6 +77,7 @@ AC_CONFIG_FILES([Makefile
 	gnulib/lib/Makefile
 	doc/Makefile
 	init/Makefile
+	init/openrc/Makefile
 	init/systemd/Makefile
 	init/sysvinit/Makefile
 	init/upstart/Makefile

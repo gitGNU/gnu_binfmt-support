@@ -9,6 +9,8 @@ Embed full path to update-binfmts into the sample sysvinit script and the
 Upstart job file (the systemd unit file already did this), to save a path
 lookup.
 
+Add OpenRC support.
+
 binfmt-support 2.1.1 (29 December 2013)
 =======================================
 

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-## Copyright (C) 2013 Colin Watson.
+## Copyright (C) 2014 Colin Watson.
 ##
 ## This file is part of binfmt-support.
 ##
@@ -18,4 +18,11 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-SUBDIRS = openrc systemd sysvinit upstart
+EXTRA_DIST = binfmt-support.in
+
+CLEANFILES = binfmt-support
+
+noinst_SCRIPTS = binfmt-support
+
+binfmt-support: binfmt-support.in
+	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
