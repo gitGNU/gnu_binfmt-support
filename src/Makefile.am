@@ -25,7 +25,11 @@ pkglibexec_PROGRAMS = run-detectors
 
 AM_CPPFLAGS = \
 	-I$(top_builddir)/gnulib/lib \
-	-I$(top_srcdir)/gnulib/lib
+	-I$(top_srcdir)/gnulib/lib \
+	-DADMINDIR=\"$(admindir)\" \
+	-DIMPORTDIR=\"$(importdir)\" \
+	-DPROCDIR=\"$(procdir)\" \
+	-DAUXDIR=\"$(pkglibexecdir)\"
 
 AM_CFLAGS = \
 	$(libpipeline_CFLAGS)

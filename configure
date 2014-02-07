@@ -634,6 +634,9 @@ am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+procdir
+importdir
+admindir
 CROSS_COMPILING_FALSE
 CROSS_COMPILING_TRUE
 HAVE_SYSTEMD_FALSE
@@ -18030,6 +18033,13 @@ else
   CROSS_COMPILING_TRUE='#'
   CROSS_COMPILING_FALSE=
 fi
+
+
+admindir='$(localstatedir)/lib/binfmts'
+
+importdir='$(datadir)/binfmts'
+
+procdir='/proc/sys/fs/binfmt_misc'
 
 
 ac_config_files="$ac_config_files Makefile gnulib/lib/Makefile doc/Makefile init/Makefile init/systemd/Makefile init/sysvinit/Makefile init/upstart/Makefile man/Makefile src/Makefile src/tests/Makefile"

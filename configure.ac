@@ -68,6 +68,10 @@ AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$with_systemdsystemunitdir" != x])
 # If we're cross-compiling, tests won't work.
 AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" = xyes])
 
+AC_SUBST([admindir], ['$(localstatedir)/lib/binfmts'])
+AC_SUBST([importdir], ['$(datadir)/binfmts'])
+AC_SUBST([procdir], ['/proc/sys/fs/binfmt_misc'])
+
 AC_CONFIG_FILES([Makefile
 	gnulib/lib/Makefile
 	doc/Makefile

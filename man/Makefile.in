@@ -78,8 +78,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = man
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(dist_man8_MANS)
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/gnulib/m4/00gnulib.m4 \
 	$(top_srcdir)/gnulib/m4/alloca.m4 \
@@ -217,7 +216,7 @@ am__uninstall_files_from_dir = { \
 man8dir = $(mandir)/man8
 am__installdirs = "$(DESTDIR)$(man8dir)"
 NROFF = nroff
-MANS = $(dist_man8_MANS)
+MANS = $(man8_MANS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -887,6 +886,7 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
+admindir = @admindir@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -915,6 +915,7 @@ host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
 htmldir = @htmldir@
+importdir = @importdir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -929,6 +930,7 @@ mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
 prefix = @prefix@
+procdir = @procdir@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
@@ -940,10 +942,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dist_man8_MANS = update-binfmts.8
+man8_MANS = update-binfmts.8
+CLEANFILES = $(man8_MANS)
 all: all-am
 
 .SUFFIXES:
+.SUFFIXES: .8 .man8
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -974,9 +978,9 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-man8: $(dist_man8_MANS)
+install-man8: $(man8_MANS)
 	@$(NORMAL_INSTALL)
-	@list1='$(dist_man8_MANS)'; \
+	@list1='$(man8_MANS)'; \
 	list2=''; \
 	test -n "$(man8dir)" \
 	  && test -n "`echo $$list1$$list2`" \
@@ -1010,7 +1014,7 @@ install-man8: $(dist_man8_MANS)
 
 uninstall-man8:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_man8_MANS)'; test -n "$(man8dir)" || exit 0; \
+	@list='$(man8_MANS)'; test -n "$(man8dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^8][0-9a-z]*$$,8,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -1052,6 +1056,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 check-am: all-am
 check: check-am
 all-am: Makefile $(MANS)
@@ -1081,6 +1088,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -1160,17 +1168,31 @@ uninstall-man: uninstall-man8
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic cscopelist-am \
-	ctags-am distclean distclean-generic distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man8 install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags-am uninstall uninstall-am uninstall-man \
-	uninstall-man8
+	ctags-am dist-hook distclean distclean-generic distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-man8 \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am tags-am uninstall \
+	uninstall-am uninstall-man uninstall-man8
 
+
+.man8.8:
+	sed -e 's,%admindir%,$(admindir),g; s,%importdir%,$(importdir),g' \
+		$< > $@
+
+dist-hook:
+	set -e; \
+	dist_files=`for file in $(man8_MANS); do \
+			echo $$file | sed 's/\.\([0-9]\)/\.man\1/'; \
+		    done`; \
+	for file in $$dist_files; do \
+		test -f $(distdir)/$$file \
+		|| cp -p $(srcdir)/$$file $(distdir)/$$file; \
+	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

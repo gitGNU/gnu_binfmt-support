@@ -31,6 +31,7 @@ init/systemd/binfmt-support.service
 init/sysvinit/Makefile
 init/upstart/Makefile
 man/Makefile
+man/update-binfmts.8
 src/Makefile
 src/run-detectors
 src/tests/Makefile

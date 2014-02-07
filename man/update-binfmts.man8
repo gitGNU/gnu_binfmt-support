@@ -82,11 +82,11 @@ action should be used instead.
 .It Fl Fl admindir Ar directory
 Specifies the administrative directory, when this is to be different from
 the default of
-.Pa /var/lib/binfmts .
+.Pa %admindir% .
 .It Fl Fl importdir Ar directory
 Specifies the directory from which packaged binary formats are imported,
 when this is to be different from the default of
-.Pa /usr/share/binfmts .
+.Pa %importdir% .
 .It Fl Fl test
 Don't do anything, just demonstrate what would be done.
 .It Fl Fl help
@@ -135,7 +135,7 @@ is given.
 If
 .Ar name
 is not a full path, it is assumed to be a file in the import directory
-.Pf ( Pa /usr/share/binfmts
+.Pf ( Pa %importdir%
 by default).
 See
 .Sx FORMAT FILES
