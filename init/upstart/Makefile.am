@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-## Copyright (C) 2013 Colin Watson.
+## Copyright (C) 2013, 2014 Colin Watson.
 ##
 ## This file is part of binfmt-support.
 ##
@@ -18,5 +18,12 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
+EXTRA_DIST = binfmt-support.conf.in
+
+CLEANFILES = binfmt-support.conf
+
 upstartdir = $(sysconfdir)/init
-dist_upstart_DATA = binfmt-support.conf
+upstart_DATA = binfmt-support.conf
+
+binfmt-support.conf: binfmt-support.conf.in
+	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@

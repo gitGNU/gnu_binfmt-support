@@ -28,4 +28,4 @@ start on filesystem
 
 task
 
-exec update-binfmts --enable
+exec @sbindir@/update-binfmts --enable

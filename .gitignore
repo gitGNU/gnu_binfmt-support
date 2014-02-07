@@ -29,7 +29,9 @@ init/Makefile
 init/systemd/Makefile
 init/systemd/binfmt-support.service
 init/sysvinit/Makefile
+init/sysvinit/binfmt-support.sh
 init/upstart/Makefile
+init/upstart/binfmt-support.conf
 man/Makefile
 man/update-binfmts.8
 src/Makefile

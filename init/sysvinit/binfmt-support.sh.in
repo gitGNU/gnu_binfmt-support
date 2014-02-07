@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2002, 2005, 2009, 2010 Colin Watson.
+# Copyright (C) 2002, 2005, 2009, 2010, 2014 Colin Watson.
 #
 # This file is part of binfmt-support.
 #
@@ -21,7 +21,6 @@
 # This is a simple generic SysV init script.  It may need adjustments for
 # distribution policies, for example logging and LSB information.
 
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 NAME=binfmt-support
 DESC="additional executable binary formats"
 
@@ -29,7 +28,7 @@ if [ "$(uname)" != Linux ]; then
   exit 0
 fi
 
-which update-binfmts >/dev/null 2>&1 || exit 0
+test -x @sbindir@/update-binfmts || exit 0
 
 set -e
 CODE=0
@@ -37,14 +36,14 @@ CODE=0
 case "$1" in
   start)
     echo -n "Enabling $DESC: "
-    update-binfmts --enable || CODE=$?
+    @sbindir@/update-binfmts --enable || CODE=$?
     echo "$NAME."
     exit $CODE
     ;;
 
   stop)
     echo -n "Disabling $DESC: "
-    update-binfmts --disable || CODE=$?
+    @sbindir@/update-binfmts --disable || CODE=$?
     echo "$NAME."
     exit $CODE
     ;;

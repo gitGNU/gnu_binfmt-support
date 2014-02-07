@@ -79,8 +79,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = init/upstart
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(dist_upstart_DATA)
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/gnulib/m4/00gnulib.m4 \
 	$(top_srcdir)/gnulib/m4/alloca.m4 \
@@ -216,7 +215,7 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(upstartdir)"
-DATA = $(dist_upstart_DATA)
+DATA = $(upstart_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -942,8 +941,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+EXTRA_DIST = binfmt-support.conf.in
+CLEANFILES = binfmt-support.conf
 upstartdir = $(sysconfdir)/init
-dist_upstart_DATA = binfmt-support.conf
+upstart_DATA = binfmt-support.conf
 all: all-am
 
 .SUFFIXES:
@@ -977,9 +978,9 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-dist_upstartDATA: $(dist_upstart_DATA)
+install-upstartDATA: $(upstart_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(dist_upstart_DATA)'; test -n "$(upstartdir)" || list=; \
+	@list='$(upstart_DATA)'; test -n "$(upstartdir)" || list=; \
 	if test -n "$$list"; then \
 	  echo " $(MKDIR_P) '$(DESTDIR)$(upstartdir)'"; \
 	  $(MKDIR_P) "$(DESTDIR)$(upstartdir)" || exit 1; \
@@ -993,9 +994,9 @@ install-dist_upstartDATA: $(dist_upstart_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(upstartdir)" || exit $$?; \
 	done
 
-uninstall-dist_upstartDATA:
+uninstall-upstartDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_upstart_DATA)'; test -n "$(upstartdir)" || list=; \
+	@list='$(upstart_DATA)'; test -n "$(upstartdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(upstartdir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
@@ -1064,6 +1065,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -1092,7 +1094,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_upstartDATA
+install-data-am: install-upstartDATA
 
 install-dvi: install-dvi-am
 
@@ -1136,22 +1138,25 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_upstartDATA
+uninstall-am: uninstall-upstartDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic cscopelist-am \
 	ctags-am distclean distclean-generic distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
-	install-data-am install-dist_upstartDATA install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags-am uninstall \
-	uninstall-am uninstall-dist_upstartDATA
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip install-upstartDATA \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags-am uninstall uninstall-am \
+	uninstall-upstartDATA
 
+
+binfmt-support.conf: binfmt-support.conf.in
+	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-## Copyright (C) 2013 Colin Watson.
+## Copyright (C) 2013, 2014 Colin Watson.
 ##
 ## This file is part of binfmt-support.
 ##
@@ -18,4 +18,11 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-dist_noinst_SCRIPTS = binfmt-support.sh
+EXTRA_DIST = binfmt-support.sh.in
+
+CLEANFILES = binfmt-support.sh
+
+noinst_SCRIPTS = binfmt-support.sh
+
+binfmt-support.sh: binfmt-support.sh.in
+	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
