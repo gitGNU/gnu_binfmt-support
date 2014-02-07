@@ -18,11 +18,11 @@
 ## with binfmt-support; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-EXTRA_DIST = binfmt-support.sh.in
+EXTRA_DIST = binfmt-support.in
 
-CLEANFILES = binfmt-support.sh
+CLEANFILES = binfmt-support
 
-noinst_SCRIPTS = binfmt-support.sh
+noinst_SCRIPTS = binfmt-support
 
-binfmt-support.sh: binfmt-support.sh.in
+binfmt-support: binfmt-support.in
 	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@

@@ -31,7 +31,7 @@ init/openrc/binfmt-support
 init/systemd/Makefile
 init/systemd/binfmt-support.service
 init/sysvinit/Makefile
-init/sysvinit/binfmt-support.sh
+init/sysvinit/binfmt-support
 init/upstart/Makefile
 init/upstart/binfmt-support.conf
 man/Makefile

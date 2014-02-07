@@ -913,9 +913,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = binfmt-support.sh.in
-CLEANFILES = binfmt-support.sh
-noinst_SCRIPTS = binfmt-support.sh
+EXTRA_DIST = binfmt-support.in
+CLEANFILES = binfmt-support
+noinst_SCRIPTS = binfmt-support
 all: all-am
 
 .SUFFIXES:
@@ -1101,7 +1101,7 @@ uninstall-am:
 	pdf-am ps ps-am tags-am uninstall uninstall-am
 
 
-binfmt-support.sh: binfmt-support.sh.in
+binfmt-support: binfmt-support.in
 	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
