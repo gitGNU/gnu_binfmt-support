@@ -60,6 +60,18 @@ AC_TYPE_SIZE_T
 
 PKG_CHECK_MODULES([libpipeline], [libpipeline])
 
+AC_ARG_ENABLE([sysvinit],
+	      AS_HELP_STRING([--enable-sysvinit], [Install sysvinit script]))
+AM_CONDITIONAL([INSTALL_SYSVINIT], [test "${enable_sysvinit+set}" = set])
+
+AC_ARG_ENABLE([openrc],
+	      AS_HELP_STRING([--enable-openrc], [Install OpenRC script]))
+AM_CONDITIONAL([INSTALL_OPENRC], [test "${enable_openrc+set}" = set])
+
+if test "${enable_sysvinit+set}" = set && test "${enable_openrc+set}" = set; then
+	AC_MSG_ERROR([--enable-sysvinit and --enable-openrc are mutually exclusive])
+fi
+
 AC_ARG_WITH([systemdsystemunitdir],
 	    AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files]),
 	    [], [with_systemdsystemunitdir="$($PKG_CONFIG --variable=systemdsystemunitdir systemd)"])

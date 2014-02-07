@@ -642,6 +642,10 @@ CROSS_COMPILING_TRUE
 HAVE_SYSTEMD_FALSE
 HAVE_SYSTEMD_TRUE
 systemdsystemunitdir
+INSTALL_OPENRC_FALSE
+INSTALL_OPENRC_TRUE
+INSTALL_SYSVINIT_FALSE
+INSTALL_SYSVINIT_TRUE
 libpipeline_LIBS
 libpipeline_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -1384,6 +1388,8 @@ enable_silent_rules
 enable_maintainer_mode
 enable_dependency_tracking
 enable_largefile
+enable_sysvinit
+enable_openrc
 with_systemdsystemunitdir
 '
       ac_precious_vars='build_alias
@@ -2028,6 +2034,8 @@ Optional Features:
   --disable-dependency-tracking
                           speeds up one-time build
   --disable-largefile     omit support for large files
+  --enable-sysvinit       Install sysvinit script
+  --enable-openrc         Install OpenRC script
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -18007,6 +18015,38 @@ $as_echo "yes" >&6; }
 
 fi
 
+# Check whether --enable-sysvinit was given.
+if test "${enable_sysvinit+set}" = set; then :
+  enableval=$enable_sysvinit;
+fi
+
+ if test "${enable_sysvinit+set}" = set; then
+  INSTALL_SYSVINIT_TRUE=
+  INSTALL_SYSVINIT_FALSE='#'
+else
+  INSTALL_SYSVINIT_TRUE='#'
+  INSTALL_SYSVINIT_FALSE=
+fi
+
+
+# Check whether --enable-openrc was given.
+if test "${enable_openrc+set}" = set; then :
+  enableval=$enable_openrc;
+fi
+
+ if test "${enable_openrc+set}" = set; then
+  INSTALL_OPENRC_TRUE=
+  INSTALL_OPENRC_FALSE='#'
+else
+  INSTALL_OPENRC_TRUE='#'
+  INSTALL_OPENRC_FALSE=
+fi
+
+
+if test "${enable_sysvinit+set}" = set && test "${enable_openrc+set}" = set; then
+	as_fn_error $? "--enable-sysvinit and --enable-openrc are mutually exclusive" "$LINENO" 5
+fi
+
 
 # Check whether --with-systemdsystemunitdir was given.
 if test "${with_systemdsystemunitdir+set}" = set; then :
@@ -18259,6 +18299,14 @@ fi
     gltests_LTLIBOBJS=$gltests_ltlibobjs
 
 
+if test -z "${INSTALL_SYSVINIT_TRUE}" && test -z "${INSTALL_SYSVINIT_FALSE}"; then
+  as_fn_error $? "conditional \"INSTALL_SYSVINIT\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${INSTALL_OPENRC_TRUE}" && test -z "${INSTALL_OPENRC_FALSE}"; then
+  as_fn_error $? "conditional \"INSTALL_OPENRC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${HAVE_SYSTEMD_TRUE}" && test -z "${HAVE_SYSTEMD_FALSE}"; then
   as_fn_error $? "conditional \"HAVE_SYSTEMD\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5

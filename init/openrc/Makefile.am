@@ -22,7 +22,10 @@ EXTRA_DIST = binfmt-support.in
 
 CLEANFILES = binfmt-support
 
-noinst_SCRIPTS = binfmt-support
+if INSTALL_OPENRC
+openrcdir = $(sysconfdir)/init.d
+openrc_SCRIPTS = binfmt-support
 
 binfmt-support: binfmt-support.in
 	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
+endif

@@ -11,6 +11,10 @@ lookup.
 
 Add OpenRC support.
 
+Add mutually-exclusive --enable-sysvinit and --enable-openrc configure
+options, which cause the sysvinit or OpenRC script respectively to be
+installed to $sysconfdir/init.d/binfmt-support.
+
 binfmt-support 2.1.1 (29 December 2013)
 =======================================
 

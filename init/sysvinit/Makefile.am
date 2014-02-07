@@ -22,7 +22,10 @@ EXTRA_DIST = binfmt-support.in
 
 CLEANFILES = binfmt-support
 
-noinst_SCRIPTS = binfmt-support
+if INSTALL_SYSVINIT
+sysvinitdir = $(sysconfdir)/init.d
+sysvinit_SCRIPTS = binfmt-support
 
 binfmt-support: binfmt-support.in
 	sed -e "s,[@]sbindir[@],$(sbindir),g" $< > $@
+endif
