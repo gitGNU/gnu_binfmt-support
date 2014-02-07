@@ -58,3 +58,7 @@ update_binfmts_SOURCES = \
 run_detectors_SOURCES = \
 	$(COMMON) \
 	run-detectors.c
+
+install-data-hook:
+	$(MKDIR_P) $(DESTDIR)$(admindir)
+	$(MKDIR_P) $(DESTDIR)$(importdir)

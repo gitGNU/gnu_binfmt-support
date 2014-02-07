@@ -7472,6 +7472,7 @@ fi
 
 fi
 
+
 # Check for various header files and associated libraries.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing strerror" >&5
 $as_echo_n "checking for library containing strerror... " >&6; }

@@ -48,6 +48,7 @@ then
 	gl_WARN_ADD([-Wredundant-decls])
 	gl_WARN_ADD([-Wno-missing-field-initializers])
 fi
+AC_PROG_MKDIR_P
 
 # Check for various header files and associated libraries.
 AC_ISC_POSIX
