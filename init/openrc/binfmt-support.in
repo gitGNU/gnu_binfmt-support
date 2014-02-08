@@ -34,6 +34,7 @@ start()
 
 stop()
 {
+	[ "$(uname)" = Linux ] || return 0
 	ebegin "Disabling additional executable binary formats"
 	@sbindir@/update-binfmts --disable
 	eend $@
