@@ -26,7 +26,7 @@ depend()
 
 start()
 {
-	[ "$(uname)" != Linux ] || return 0
+	[ "$(uname)" = Linux ] || return 0
 	ebegin "Enabling additional executable binary formats"
 	@sbindir@/update-binfmts --enable
 	eend $?
