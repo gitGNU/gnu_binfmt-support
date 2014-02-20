@@ -38,5 +38,7 @@ man/Makefile
 man/update-binfmts.8
 src/Makefile
 src/run-detectors
+src/tests/*.log
+src/tests/*.trs
 src/tests/Makefile
 src/update-binfmts
