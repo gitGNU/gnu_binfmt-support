@@ -64,7 +64,7 @@ expect_pass 'detector 1: admindir entry OK' \
 	    'diff -u "$tmpdir/var/lib/binfmts/test-1" "$tmpdir/1-admin.exp"'
 cat >"$tmpdir/1-proc.exp" <<EOF
 enabled
-interpreter /usr/lib/binfmt-support/run-detectors
+interpreter $pkglibexecdir/run-detectors
 flags: 
 extension .ext
 EOF
@@ -87,7 +87,7 @@ expect_pass 'detector 2: admindir entry OK' \
 	    'diff -u "$tmpdir/var/lib/binfmts/test-2" "$tmpdir/2-admin.exp"'
 cat >"$tmpdir/2-proc.exp" <<EOF
 enabled
-interpreter /usr/lib/binfmt-support/run-detectors
+interpreter $pkglibexecdir/run-detectors
 flags: 
 extension .ext
 EOF
@@ -110,7 +110,7 @@ expect_pass 'no detector: admindir entry OK' \
 	    'diff -u "$tmpdir/var/lib/binfmts/test-3" "$tmpdir/3-admin.exp"'
 cat >"$tmpdir/3-proc.exp" <<EOF
 enabled
-interpreter /usr/lib/binfmt-support/run-detectors
+interpreter $pkglibexecdir/run-detectors
 flags: 
 extension .ext
 EOF

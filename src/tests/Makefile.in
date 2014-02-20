@@ -1131,7 +1131,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS_ENVIRONMENT = PATH=..:$$PATH; export PATH; \
-		    top_builddir=$(top_builddir); export top_builddir;
+		    top_builddir=$(top_builddir); export top_builddir; \
+		    pkglibexecdir=$(pkglibexecdir); export pkglibexecdir;
 
 # Each test must use the configure-detected shell, not necessarily /bin/sh.
 AM_LOG_FLAGS = $(SHELL)
