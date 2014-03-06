@@ -18596,7 +18596,7 @@ if test "${enable_sysvinit+set}" = set; then :
   enableval=$enable_sysvinit;
 fi
 
- if test "${enable_sysvinit+set}" = set; then
+ if test "x$enable_sysvinit" = xyes; then
   INSTALL_SYSVINIT_TRUE=
   INSTALL_SYSVINIT_FALSE='#'
 else
@@ -18610,7 +18610,7 @@ if test "${enable_openrc+set}" = set; then :
   enableval=$enable_openrc;
 fi
 
- if test "${enable_openrc+set}" = set; then
+ if test "x$enable_openrc" = xyes; then
   INSTALL_OPENRC_TRUE=
   INSTALL_OPENRC_FALSE='#'
 else
@@ -18619,7 +18619,7 @@ else
 fi
 
 
-if test "${enable_sysvinit+set}" = set && test "${enable_openrc+set}" = set; then
+if test "x$enable_sysvinit" = xyes && test "x$enable_openrc" = xyes; then
 	as_fn_error $? "--enable-sysvinit and --enable-openrc are mutually exclusive" "$LINENO" 5
 fi
 

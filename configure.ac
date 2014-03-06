@@ -62,13 +62,13 @@ PKG_CHECK_MODULES([libpipeline], [libpipeline])
 
 AC_ARG_ENABLE([sysvinit],
 	      AS_HELP_STRING([--enable-sysvinit], [Install sysvinit script]))
-AM_CONDITIONAL([INSTALL_SYSVINIT], [test "${enable_sysvinit+set}" = set])
+AM_CONDITIONAL([INSTALL_SYSVINIT], [test "x$enable_sysvinit" = xyes])
 
 AC_ARG_ENABLE([openrc],
 	      AS_HELP_STRING([--enable-openrc], [Install OpenRC script]))
-AM_CONDITIONAL([INSTALL_OPENRC], [test "${enable_openrc+set}" = set])
+AM_CONDITIONAL([INSTALL_OPENRC], [test "x$enable_openrc" = xyes])
 
-if test "${enable_sysvinit+set}" = set && test "${enable_openrc+set}" = set; then
+if test "x$enable_sysvinit" = xyes && test "x$enable_openrc" = xyes; then
 	AC_MSG_ERROR([--enable-sysvinit and --enable-openrc are mutually exclusive])
 fi
 
