@@ -1,5 +1,5 @@
-binfmt-support 2.1.4
-====================
+binfmt-support 2.1.4 (30 March 2014)
+====================================
 
 Fix test suite when libexecdir is not /usr/lib.
 
