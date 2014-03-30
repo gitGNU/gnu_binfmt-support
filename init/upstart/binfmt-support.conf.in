@@ -26,6 +26,5 @@ author		"Colin Watson <cjwatson@debian.org>"
 
 start on filesystem
 
-task
-
-exec @sbindir@/update-binfmts --enable
+pre-start exec @sbindir@/update-binfmts --enable
+post-stop exec @sbindir@/update-binfmts --disable
