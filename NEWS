@@ -1,5 +1,5 @@
-binfmt-support 2.1.5
-====================
+binfmt-support 2.1.5 (24 August 2014)
+=====================================
 
 Add an "update-binfmts --preserve yes" option, mapping to the 'P' flag in
 Linux binfmt_misc's flags field.  Thanks to Riku Voipio.
