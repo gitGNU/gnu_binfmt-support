@@ -526,7 +526,7 @@ static int act_disable (const char *name)
 
 static int act_install (const char *name, const struct binfmt *binfmt)
 {
-    char *admindir_name, *procdir_name;
+    char *admindir_name;
 
     load_format (name, 1);
     if (kvhash_exists (formats, name)) {
@@ -561,27 +561,6 @@ static int act_install (const char *name, const struct binfmt *binfmt)
 	    return 0;
 	}
     }
-    procdir_name = xasprintf ("%s/%s", procdir, name);
-    if (exists (procdir_name) && !test) {
-	/* This is a bit tricky.  If we get here, then the kernel knows
-	 * about a format we don't.  Either somebody has used binfmt_misc
-	 * directly, or update-binfmts did something wrong.  For now we do
-	 * nothing; disabling and re-enabling all binary formats will fix
-	 * this anyway.  There may be a --force option in the future to help
-	 * with problems like this.
-	 *
-	 * Disabled for --test, because otherwise it never works; the
-	 * vagaries of binfmt_misc mean that it isn't really possible to
-	 * find out from userspace exactly what's going to happen if people
-	 * have been bypassing update-binfmts.
-	 */
-	warning ("found manually created entry for %s in %s; leaving it alone",
-		 name, procdir);
-	free (procdir_name);
-	free (admindir_name);
-	return 1;
-    }
-    free (procdir_name);
 
     if (test) {
 	printf ("install the following binary format description:\n");
