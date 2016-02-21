@@ -1,5 +1,5 @@
-binfmt-support 2.1.6
-====================
+binfmt-support 2.1.6 (21 February 2016)
+=======================================
 
 Always install database entry even if /proc entry exists.  Thanks to Raphaël
 Hertzog.
