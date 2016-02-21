@@ -19,11 +19,14 @@
 [Unit]
 Description=Enable support for additional executable binary formats
 Documentation=man:update-binfmts(8)
+DefaultDependencies=false
+After=local-fs.target proc-sys-fs-binfmt_misc.automount
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=@sbindir@/update-binfmts --enable
+ExecStop=@sbindir@/update-binfmts --disable
 Restart=no
 
 [Install]

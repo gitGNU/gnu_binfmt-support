@@ -4,6 +4,8 @@ binfmt-support 2.1.6
 Always install database entry even if /proc entry exists.  Thanks to Raphaël
 Hertzog.
 
+Implement a stop action for the systemd service.  Thanks to Michael Biebl.
+
 binfmt-support 2.1.5 (24 August 2014)
 =====================================
 
